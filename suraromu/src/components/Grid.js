@@ -33,7 +33,7 @@ function Grid(props) {
 
   const backgroundBoard = <div style={gridStyleBoard}>{cells}</div>
 
-  const gridStyleVertLines = {
+  const gridStyleHoriLines = {
     display: 'grid',
     gridTemplateColumns: `repeat(${columns-1}, ${cellSize}%)`,
     gridTemplateRows: `repeat(${rows}, ${cellSize*0.50}%)`,
@@ -52,13 +52,13 @@ function Grid(props) {
     
   };
 
-  const vertLines = Array.from({ length: rows*(columns-1) }).map((_, index) => (
-    <VertLine index={index}/>
+  const horiLines = Array.from({ length: rows*(columns-1) }).map((_, index) => (
+    <HoriLine index={index}/>
   ));
 
-  const vertLinesGrid = <div style={gridStyleVertLines}>{vertLines}</div>
+  const horiLinesGrid = <div style={gridStyleHoriLines}>{horiLines}</div>
   
-  const gridStyleHoriLines = {
+  const gridStyleVertLines = {
     display: 'grid',
     gridTemplateColumns: `repeat(${columns}, ${cellSize*0.5}%)`,
     gridTemplateRows: `repeat(${rows-1}, ${cellSize}%)`,
@@ -78,11 +78,11 @@ function Grid(props) {
     
   };
 
-  const horiLines = Array.from({ length: (rows-1)*columns }).map((_, index) => (
-    <HoriLine index={index}/>
+  const vertLines = Array.from({ length: (rows-1)*columns }).map((_, index) => (
+    <VertLine index={index}/>
   ));
 
-  const horiLinesGrid = <div style={gridStyleHoriLines}>{horiLines}</div>
+  const vertLinesGrid = <div style={gridStyleVertLines}>{vertLines}</div>
 
 
   return (
