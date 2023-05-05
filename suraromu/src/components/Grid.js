@@ -45,9 +45,9 @@ function Grid(props) {
     aspectRatio: "1/1",
     left: 0,
     right: 0,
-    paddingTop: `${cellSize*0.4}%`,
+    top: `${cellSize*0.5}%`,
     bottom: 0,
-    position: "relative",
+    position: "absolute",
     justifyContent: "center",
     
   };
@@ -84,9 +84,17 @@ function Grid(props) {
 
   const vertLinesGrid = <div style={gridStyleVertLines}>{vertLines}</div>
 
+  
+  const gridStyle = {
+    position: "relative",
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    height: "1000px",
+  }
 
   return (
-    <div className='Grid'>
+    <div className='Grid' style={gridStyle}>
       {backgroundBoard}
       {vertLinesGrid}
       {horiLinesGrid}

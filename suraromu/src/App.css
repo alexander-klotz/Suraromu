@@ -24,7 +24,8 @@
 .vert--line {
   content:"";
   z-index: -1;
-  border-left: 2px solid #ff0000;
+  border-left: 5px solid #358864;
+  border-radius: 5px;
   height: 100%;
   display: block;
   transform: translate(50%);
@@ -33,7 +34,8 @@
 .hori--line {
   content:"";
   z-index: -1;
-  border-top: 2px solid #0000ff;
+  border-top: 5px solid #358864;
+  border-radius: 5px;
   width: 100%;
   display: block;
   position: relative;
@@ -53,13 +55,7 @@
 }
 
 
-.Grid {
-  background-color: rgb(202, 165, 191);
-  position: relative;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-}
+
 
 
 
