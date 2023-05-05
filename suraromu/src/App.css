@@ -25,7 +25,7 @@
   content:"";
   z-index: -1;
   border-left: 5px solid #358864;
-  border-radius: 5px;
+  border-radius: 1px;
   height: 100%;
   display: block;
   transform: translate(50%);
@@ -35,7 +35,7 @@
   content:"";
   z-index: -1;
   border-top: 5px solid #358864;
-  border-radius: 5px;
+  border-radius: 1px;
   width: 100%;
   display: block;
   position: relative;

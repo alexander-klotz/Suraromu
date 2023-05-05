@@ -45,7 +45,7 @@ function Grid(props) {
     aspectRatio: "1/1",
     left: 0,
     right: 0,
-    top: `${cellSize*0.5}%`,
+    top: `${cellSize*0.35}%`,
     bottom: 0,
     position: "absolute",
     justifyContent: "center",
@@ -70,7 +70,7 @@ function Grid(props) {
     aspectRatio: "1/1",
     left: 0,
     right: 0,
-    top: `${cellSize}%`,
+    top: `${cellSize*0.75}%`,
     bottom: 0,
     position: "absolute",
     justifyContent: "center",
@@ -87,10 +87,7 @@ function Grid(props) {
   
   const gridStyle = {
     position: "relative",
-    display: "flex",
-    justifyContent: "center",
-    flexWrap: "wrap",
-    height: "1000px",
+    aspectRatio: "1/1",
   }
 
   return (
