@@ -23,6 +23,7 @@ function Grid(props) {
     top: 0,
     bottom: 0,
     position: "absolute",
+    justifyContent: "center",
     
   };
 
@@ -34,17 +35,17 @@ function Grid(props) {
 
   const gridStyleVertLines = {
     display: 'grid',
-    gridTemplateColumns: `repeat(${columns-1}, ${cellSize-3}%)`,
-    gridTemplateRows: `repeat(${rows}, ${cellSize-3}%)`,
+    gridTemplateColumns: `repeat(${columns-1}, ${cellSize}%)`,
+    gridTemplateRows: `repeat(${rows}, ${cellSize*0.50}%)`,
     margin: "auto",
     padding: '0rem',
     width: "80%",
-    gap: "3%",
+    rowGap: `${cellSize*0.5}%`,
     maxWidth: "60rem",
     aspectRatio: "1/1",
     left: 0,
     right: 0,
-    paddingTop: "1.5%",
+    paddingTop: `${cellSize*0.4}%`,
     bottom: 0,
     position: "relative",
     justifyContent: "center",
@@ -59,20 +60,20 @@ function Grid(props) {
   
   const gridStyleHoriLines = {
     display: 'grid',
-    gridTemplateColumns: `repeat(${columns}, ${cellSize-3}%)`,
-    gridTemplateRows: `repeat(${rows-1}, ${cellSize-3}%)`,
+    gridTemplateColumns: `repeat(${columns}, ${cellSize*0.5}%)`,
+    gridTemplateRows: `repeat(${rows-1}, ${cellSize}%)`,
     margin: "auto",
     padding: '0rem',
-    
+    columnGap: `${cellSize*0.5}%`,
     width: "80%",
-    gap: "3%",
     maxWidth: "60rem",
     aspectRatio: "1/1",
-    left: "1.5%",
+    left: 0,
     right: 0,
-    top: `${cellSize+1.5}%`,
+    top: `${cellSize}%`,
     bottom: 0,
     position: "absolute",
+    justifyContent: "center",
   
     
   };
