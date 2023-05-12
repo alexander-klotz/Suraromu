@@ -21,7 +21,7 @@ function Grid(props) {
     left: 0,
     right: 0,
     top: 0,
-    bottom: 0,
+    bottom: "auto",
     position: "absolute",
     justifyContent: "center",
     
@@ -45,8 +45,8 @@ function Grid(props) {
     aspectRatio: "1/1",
     left: 0,
     right: 0,
-    top: `${cellSize*0.35}%`,
-    bottom: 0,
+    top: `${cellSize*0.175}%`,
+    bottom: "auto",
     position: "absolute",
     justifyContent: "center",
     
@@ -70,8 +70,8 @@ function Grid(props) {
     aspectRatio: "1/1",
     left: 0,
     right: 0,
-    top: `${cellSize*0.75}%`,
-    bottom: 0,
+    top: `${cellSize*0.35}%`,
+    bottom: "auto",
     position: "absolute",
     justifyContent: "center",
   

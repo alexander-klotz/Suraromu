@@ -1,0 +1,35 @@
+.InfoButton {
+    border: 0px rgb(0, 0, 0) solid;
+    background-color: #ffffff;
+    border-radius: 100%;
+    position: fixed;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 90%;
+    left: 90%;
+    height: 8%;
+    aspect-ratio: 1 / 1;
+    font-size: 200%;
+    transform: translate(-50%, -50%);
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 10px 20px;
+    font-weight: 500;
+} 
+
+
+.Info {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 40px;
+    position: fixed;
+    height: 50%;
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: rgba(0, 0, 0, 0.35) 10px 10px 25px;
+    z-index: 30;
+} 

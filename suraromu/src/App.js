@@ -1,6 +1,7 @@
 import './App.css';
 import Board from './components/Board';
-import { useState } from 'react'
+import { useState } from 'react';
+import GameInfo from './components/GameInfo';
 
 function App() {
 
@@ -47,6 +48,7 @@ function App() {
         step="1"/>
         
         <Board rows={rows} columns={cols} />
+        <GameInfo/>
       </div>
     </>
 

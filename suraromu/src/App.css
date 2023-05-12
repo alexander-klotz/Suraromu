@@ -24,20 +24,18 @@
 .vert--line {
   content:"";
   z-index: -1;
-  border-left: 5px solid #358864;
+  border-left: 4px solid #358864;
   border-radius: 1px;
-  height: 100%;
-  display: block;
+  height: 102%;
   transform: translate(50%);
 }
 
 .hori--line {
   content:"";
   z-index: -1;
-  border-top: 5px solid #358864;
+  border-top: 4px solid #358864;
   border-radius: 1px;
-  width: 100%;
-  display: block;
+  width: 102%;
   position: relative;
   top: 50%;
   
@@ -47,11 +45,13 @@
 .hori--line--hitbox {
   z-index: 10;
   text-align: center;
+  cursor: pointer;
 }
 
 .vert--line--hitbox {
   z-index: 10;
   text-align: center;
+  cursor: pointer;
 }
 
 
