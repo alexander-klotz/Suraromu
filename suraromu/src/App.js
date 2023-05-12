@@ -5,15 +5,31 @@ import GameInfo from './components/GameInfo';
 
 function App() {
 
+
+  const createInitialArray = (rows, cols) => {
+    const newArray = [];
+    for (let i = 0; i < rows; i++) {
+      newArray.push(new Array(cols).fill(false));
+    }
+    return newArray;
+  };
+
   const [rows, setRows] = useState(10)
   const [cols, setCols] = useState(10)
+  const [arrayHori, setArrayHori] = useState(createInitialArray(9, 10));
+  const [arrayVert, setArrayVert] = useState(createInitialArray(10, 9));
+
 
   function changeRows(event){
     setRows(event.target.value)
+    setArrayHori(createInitialArray(event.target.value, cols-1));
+    setArrayVert(createInitialArray(event.target.value-1, cols));
   }
 
   function changeCols(event){
     setCols(event.target.value)
+    setArrayHori(createInitialArray(rows, event.target.value-1));
+    setArrayVert(createInitialArray(rows-1, event.target.value));
   }
 
   return (
@@ -47,7 +63,7 @@ function App() {
         min="0" max="30" 
         step="1"/>
         
-        <Board rows={rows} columns={cols} />
+        <Board rows={rows} columns={cols} arrayHori={arrayHori} arrayVert={arrayVert} changeArrayHori={setArrayHori} changeArrayVert={setArrayVert} />
         <GameInfo/>
       </div>
     </>

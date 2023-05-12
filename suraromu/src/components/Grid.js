@@ -4,6 +4,19 @@ import VertLine from './VertLine'
 import HoriLine from './HoriLine'
 
 function Grid(props) {
+
+  function handleLineClick(rowIndex, colIndex, array, changeArray) {
+    // Create a copy of the existing array
+    const newArray = [...array];
+    
+    // Update the value at the specified indices
+    newArray[rowIndex][colIndex] = !newArray[rowIndex][colIndex];
+    // Set the updated array as the new state
+    changeArray(newArray);
+  };
+
+  console.log(props)
+
   const rows = props.rows
   const columns = props.columns
   const cellSize = Math.min(100/columns, 100/rows) 
@@ -52,9 +65,18 @@ function Grid(props) {
     
   };
 
-  const horiLines = Array.from({ length: rows*(columns-1) }).map((_, index) => (
-    <HoriLine index={index}/>
-  ));
+  const horiLines = Array.from({ length: rows*(columns-1)}).map((_, index) => {
+    return (    
+      <HoriLine 
+        index={index} 
+        handleLineClick={() => 
+          handleLineClick(Math.floor(index/(columns)), index%(columns), props.arrayHori, props.changeArrayHori)} 
+        isSet={props.arrayHori[Math.floor(index/(columns))][index%(columns)]}
+      />
+    )
+  }
+
+  );
 
   const horiLinesGrid = <div style={gridStyleHoriLines}>{horiLines}</div>
   
@@ -78,9 +100,18 @@ function Grid(props) {
     
   };
 
-  const vertLines = Array.from({ length: (rows-1)*columns }).map((_, index) => (
-    <VertLine index={index}/>
-  ));
+  const vertLines = Array.from({ length: (rows-1)*columns }).map((_, index) => {
+    return (
+      <VertLine 
+      index={index} 
+      handleLineClick={() => 
+        handleLineClick(Math.floor(index/(columns)), index%(columns), props.arrayVert, props.changeArrayVert)} 
+      isSet={props.arrayVert[Math.floor(index/(columns))][index%(columns)]}
+    />
+    )
+  }
+
+  );
 
   const vertLinesGrid = <div style={gridStyleVertLines}>{vertLines}</div>
 
