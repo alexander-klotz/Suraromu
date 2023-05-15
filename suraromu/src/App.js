@@ -2,6 +2,7 @@ import './App.css';
 import Board from './components/Board';
 import { useState } from 'react';
 import GameInfo from './components/GameInfo';
+import Controls from './components/Controls';
 
 function App() {
 
@@ -32,6 +33,11 @@ function App() {
     setArrayVert(createInitialArray(rows-1, event.target.value));
   }
 
+  function deleteConnections(){
+    setArrayHori(createInitialArray(rows, cols-1));
+    setArrayVert(createInitialArray(rows-1, cols));
+  }
+
   return (
     <>
       <div className="App">
@@ -45,8 +51,7 @@ function App() {
         </header>
 
         
-        <br></br>
-        <div id="controls"></div>
+
 
         <input 
         id="rowinp" 
@@ -63,7 +68,9 @@ function App() {
         min="0" max="30" 
         step="1"/>
         
+        <Controls deleteFunction={deleteConnections}/>
         <Board rows={rows} columns={cols} arrayHori={arrayHori} arrayVert={arrayVert} changeArrayHori={setArrayHori} changeArrayVert={setArrayVert} />
+        
         <GameInfo/>
       </div>
     </>

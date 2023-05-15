@@ -2,6 +2,7 @@ import React from 'react'
 import Cell from './Cell'
 import VertLine from './VertLine'
 import HoriLine from './HoriLine'
+import getRandomPuzzle from '../utils.js/PuzzleAPI'
 
 function Grid(props) {
 
@@ -15,7 +16,7 @@ function Grid(props) {
     changeArray(newArray);
   };
 
-  console.log(props)
+  console.log(getRandomPuzzle())
 
   const rows = props.rows
   const columns = props.columns
@@ -41,7 +42,7 @@ function Grid(props) {
   };
 
   const cells = Array.from({ length: rows*columns }).map((_, index) => (
-    <Cell index={index}/>
+    <Cell index={index} type={1}/>
   ));
 
   const backgroundBoard = <div style={gridStyleBoard}>{cells}</div>
