@@ -53,20 +53,7 @@ function App() {
         
 
 
-        <input 
-        id="rowinp" 
-        type="range" 
-        min="0" max="30"
-        value={rows} 
-        onChange={changeRows}
-        step="1"/>
-        <input 
-        id="colinp" 
-        type="range"
-        value={cols} 
-        onChange={changeCols} 
-        min="0" max="30" 
-        step="1"/>
+
         
         <Controls deleteFunction={deleteConnections}/>
         <Board rows={rows} columns={cols} arrayHori={arrayHori} arrayVert={arrayVert} changeArrayHori={setArrayHori} changeArrayVert={setArrayVert} />
@@ -81,3 +68,22 @@ function App() {
 
 
 export default App;
+
+
+/*
+       <input 
+        id="rowinp" 
+        type="range" 
+        min="0" max="30"
+        value={rows} 
+        onChange={changeRows}
+        step="1"/>
+        <input 
+        id="colinp" 
+        type="range"
+        value={cols} 
+        onChange={changeCols} 
+        min="0" max="30" 
+        step="1"/>
+
+*/

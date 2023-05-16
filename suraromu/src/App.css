@@ -3,13 +3,13 @@
 }
 
 .App-header {
-  background-color: #010b1f;
+  background-color: #ccfded;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: rgb(0, 104, 10);
+  color: rgb(0, 0, 0);
 }
 
 .App-link {
