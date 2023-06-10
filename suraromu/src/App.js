@@ -21,16 +21,16 @@ function App() {
   const [arrayVert, setArrayVert] = useState(createInitialArray(10, 9));
 
 
-  function changeRows(event){
-    setRows(event.target.value)
-    setArrayHori(createInitialArray(event.target.value, cols-1));
-    setArrayVert(createInitialArray(event.target.value-1, cols));
+  function changeRows(newRows){
+    setRows(newRows)
+    setArrayHori(createInitialArray(newRows, cols-1));
+    setArrayVert(createInitialArray(newRows-1, cols));
   }
 
-  function changeCols(event){
-    setCols(event.target.value)
-    setArrayHori(createInitialArray(rows, event.target.value-1));
-    setArrayVert(createInitialArray(rows-1, event.target.value));
+  function changeCols(newCols){
+    setCols(newCols)
+    setArrayHori(createInitialArray(rows, newCols-1));
+    setArrayVert(createInitialArray(rows-1, newCols));
   }
 
   function deleteConnections(){
@@ -55,7 +55,7 @@ function App() {
 
 
         
-        <Controls deleteFunction={deleteConnections}/>
+        <Controls deleteFunction={deleteConnections} changeRows={changeRows} changeCols={changeCols}/>
         <Board rows={rows} columns={cols} arrayHori={arrayHori} arrayVert={arrayVert} changeArrayHori={setArrayHori} changeArrayVert={setArrayVert} />
         
         <GameInfo/>
@@ -68,22 +68,3 @@ function App() {
 
 
 export default App;
-
-
-/*
-       <input 
-        id="rowinp" 
-        type="range" 
-        min="0" max="30"
-        value={rows} 
-        onChange={changeRows}
-        step="1"/>
-        <input 
-        id="colinp" 
-        type="range"
-        value={cols} 
-        onChange={changeCols} 
-        min="0" max="30" 
-        step="1"/>
-
-*/

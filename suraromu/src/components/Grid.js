@@ -2,7 +2,6 @@ import React from 'react'
 import Cell from './Cell'
 import VertLine from './VertLine'
 import HoriLine from './HoriLine'
-import getRandomPuzzle from '../utils.js/PuzzleAPI'
 
 function Grid(props) {
 
@@ -15,8 +14,6 @@ function Grid(props) {
     // Set the updated array as the new state
     changeArray(newArray);
   };
-
-  console.log(getRandomPuzzle())
 
   const rows = props.rows
   const columns = props.columns
@@ -67,6 +64,7 @@ function Grid(props) {
   };
 
   const horiLines = Array.from({ length: rows*(columns-1)}).map((_, index) => {
+    console.log(props.arrayHori)
     return (    
       <HoriLine 
         index={index} 

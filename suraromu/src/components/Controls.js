@@ -1,8 +1,8 @@
 import Button from '@mui/material/Button';
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import DoneOutlineOutlinedIcon from '@mui/icons-material/DoneOutlineOutlined';
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
+import NewGameDialoge from './NewGameDialoge';
 
 export default function Controls(props) {
 
@@ -12,16 +12,14 @@ export default function Controls(props) {
     };
 
     const iconStyle = {
-        fontSize: "30px", // Adjust the size as needed
+        fontSize: "30px",
     };
 
     return (
         
         <div id="controls">
 
-            <Button style={buttonStyle} startIcon={<AddCircleOutlineOutlinedIcon style={iconStyle}/>}>
-                New
-            </Button>
+            <NewGameDialoge changeRows={props.changeRows} changeCols={props.changeCols}/>
 
             <Button style={buttonStyle} startIcon={<DoneOutlineOutlinedIcon style={iconStyle}/>}>
                 Check
