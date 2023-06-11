@@ -15,27 +15,39 @@ function App() {
     return newArray;
   };
 
-  const [rows, setRows] = useState(10)
-  const [cols, setCols] = useState(10)
-  const [arrayHori, setArrayHori] = useState(createInitialArray(9, 10));
-  const [arrayVert, setArrayVert] = useState(createInitialArray(10, 9));
+  const [puzzle, setPuzzle] = useState({
+    rows: 10,
+    cols: 10,
+    arrayHori: createInitialArray(10, 9),
+    arrayVert: createInitialArray(9, 10)
+  });
 
 
-  function changeRows(newRows){
-    setRows(newRows)
-    setArrayHori(createInitialArray(newRows, cols-1));
-    setArrayVert(createInitialArray(newRows-1, cols));
+  function changeSize(newRows, newCols) {
+    console.log("rows will be set");
+  
+    const newArrayHori = createInitialArray(newRows, newCols - 1);
+    const newArrayVert = createInitialArray(newRows - 1, newCols);
+    console.log("(changerows): ", newArrayHori, newArrayVert)
+
+    setPuzzle((prevState) => ({
+      ...prevState,
+      rows: newRows,
+      cols: newCols,
+      arrayHori: newArrayHori,
+      arrayVert: newArrayVert
+    }));
+  
+    console.log("rows are set");
   }
 
-  function changeCols(newCols){
-    setCols(newCols)
-    setArrayHori(createInitialArray(rows, newCols-1));
-    setArrayVert(createInitialArray(rows-1, newCols));
-  }
 
   function deleteConnections(){
-    setArrayHori(createInitialArray(rows, cols-1));
-    setArrayVert(createInitialArray(rows-1, cols));
+    setPuzzle((prevState) => ({
+      ...prevState,
+      arrayHori: createInitialArray(prevState.rows, prevState.cols-1),
+      arrayVert: createInitialArray(prevState.rows-1, prevState.cols)
+    }));
   }
 
   return (
@@ -55,8 +67,8 @@ function App() {
 
 
         
-        <Controls deleteFunction={deleteConnections} changeRows={changeRows} changeCols={changeCols}/>
-        <Board rows={rows} columns={cols} arrayHori={arrayHori} arrayVert={arrayVert} changeArrayHori={setArrayHori} changeArrayVert={setArrayVert} />
+        <Controls deleteFunction={deleteConnections} changeSize={changeSize}/>
+        <Board puzzle={puzzle} setPuzzle={setPuzzle}/>
         
         <GameInfo/>
       </div>

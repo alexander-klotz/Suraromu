@@ -19,7 +19,7 @@ export default function Controls(props) {
         
         <div id="controls">
 
-            <NewGameDialoge changeRows={props.changeRows} changeCols={props.changeCols}/>
+            <NewGameDialoge {...props}/>
 
             <Button style={buttonStyle} startIcon={<DoneOutlineOutlinedIcon style={iconStyle}/>}>
                 Check

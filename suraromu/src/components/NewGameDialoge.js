@@ -54,8 +54,8 @@ const NewGameDialoge = (props) => {
     // (maybe the saved ones should also be from the same api or where should they be saved??) 
     const newPuzzle = getRandomPuzzle()
     console.log(newPuzzle)
-    props.changeRows(newPuzzle.rows)
-    props.changeCols(newPuzzle.columns)
+    props.changeSize(newPuzzle.rows, newPuzzle.columns)
+
     handleClose()
   };
 

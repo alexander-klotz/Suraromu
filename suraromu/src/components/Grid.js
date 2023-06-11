@@ -5,18 +5,32 @@ import HoriLine from './HoriLine'
 
 function Grid(props) {
 
-  function handleLineClick(rowIndex, colIndex, array, changeArray) {
+  function handleLineClick(rowIndex, colIndex, orient, array) {
+    
     // Create a copy of the existing array
     const newArray = [...array];
-    
     // Update the value at the specified indices
     newArray[rowIndex][colIndex] = !newArray[rowIndex][colIndex];
     // Set the updated array as the new state
-    changeArray(newArray);
+    
+    if (orient === "h"){
+      props.setPuzzle((prevState) => ({
+        ...prevState,
+        arrayHori: newArray,
+      }));
+    }
+
+    if (orient === "v"){
+      props.setPuzzle((prevState) => ({
+        ...prevState,
+        arrayVert: newArray,
+      }));
+    }
+
   };
 
-  const rows = props.rows
-  const columns = props.columns
+  const rows = props.puzzle.rows
+  const columns = props.puzzle.cols
   const cellSize = Math.min(100/columns, 100/rows) 
   
   const gridStyleBoard = {
@@ -64,18 +78,23 @@ function Grid(props) {
   };
 
   const horiLines = Array.from({ length: rows*(columns-1)}).map((_, index) => {
-    console.log(props.arrayHori)
+    console.log("array-hori", props.puzzle.arrayHori)
+    console.log(index)
+    console.log(rows, columns)
+    console.log(Math.floor(index/(columns-1)), index%(columns-1))
     return (    
       <HoriLine 
         index={index} 
         handleLineClick={() => 
-          handleLineClick(Math.floor(index/(columns)), index%(columns), props.arrayHori, props.changeArrayHori)} 
-        isSet={props.arrayHori[Math.floor(index/(columns))][index%(columns)]}
+          handleLineClick(Math.floor(index/(columns)), index%(columns), "h", props.puzzle.arrayHori)} 
+        isSet={props.puzzle.arrayHori[Math.floor(index/(columns))][index%(columns)]}
       />
     )
   }
 
   );
+
+  console.log("testing")
 
   const horiLinesGrid = <div style={gridStyleHoriLines}>{horiLines}</div>
   
@@ -99,13 +118,13 @@ function Grid(props) {
     
   };
 
-  const vertLines = Array.from({ length: (rows-1)*columns }).map((_, index) => {
+  const vertLines = Array.from({ length: (rows-1)*columns}).map((_, index) => {
     return (
       <VertLine 
       index={index} 
       handleLineClick={() => 
-        handleLineClick(Math.floor(index/(columns)), index%(columns), props.arrayVert, props.changeArrayVert)} 
-      isSet={props.arrayVert[Math.floor(index/(columns))][index%(columns)]}
+        handleLineClick(Math.floor(index/(columns)), index%(columns), "v", props.puzzle.arrayVert)} 
+      isSet={props.puzzle.arrayVert[Math.floor(index/(columns))][index%(columns)]}
     />
     )
   }
