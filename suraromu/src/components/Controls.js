@@ -17,7 +17,6 @@ export default function Controls(props) {
     };
 
     const handleUndo = () => {
-        console.log(props.history)
         if (props.history.length > 1) {
           const previousState = props.history[props.history.length - 2];
           const newHistory = props.history.slice(0, props.history.length - 1);
@@ -44,7 +43,7 @@ export default function Controls(props) {
                 Delete
             </Button>
 
-            <Button onClick={handleUndo} disabled={props.history.length === 0} style={buttonStyle} startIcon={<UndoIcon style={iconStyle}/>}>
+            <Button onClick={handleUndo} disabled={props.history.length === 1} style={buttonStyle} startIcon={<UndoIcon style={iconStyle}/>}>
                 Undo
             </Button>
         

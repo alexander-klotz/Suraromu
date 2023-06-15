@@ -24,13 +24,10 @@ function App() {
 
   const [history, setHistory] = useState([structuredClone(puzzle)]);
 
-
   function changeSize(newRows, newCols) {
-    console.log("rows will be set");
   
     const newArrayHori = createInitialArray(newRows, newCols - 1);
     const newArrayVert = createInitialArray(newRows - 1, newCols);
-    console.log("(changerows): ", newArrayHori, newArrayVert)
 
     setPuzzle((prevState) => ({
       ...prevState,
@@ -42,7 +39,6 @@ function App() {
 
     setHistory((prevHistory) => [...prevHistory, structuredClone(puzzle)]);
   
-    console.log("rows are set");
   }
 
 
