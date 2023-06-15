@@ -59,9 +59,24 @@ function Grid(props) {
     
   };
 
-  const cells = Array.from({ length: rows*columns }).map((_, index) => (
-    <Cell index={index} type={1}/>
-  ));
+  // Type: normal=0 blocked=1 gateHori=2 gateVert=3 gateNumber=4 Start=5
+  const cells = Array.from({ length: rows*columns }).map((_, index) => {
+    const idx = [Math.floor(index/(columns)), index%(columns)]
+    let type = 0
+
+    if (props.puzzle.blockedCells.some(cell => JSON.stringify(cell) === JSON.stringify(idx))) {
+      console.log("type=1")
+      type = 1;
+    } else if (props.puzzle.startCell[0] === idx[0] && props.puzzle.startCell[1] === idx[1]) {
+      console.log("type=5")
+      type = 5;
+    }
+    //TODO: add logic for the gates! maybe own function that returns type.
+
+    return (<Cell index={index} type={type}/>)
+  }
+    
+  );
 
   const backgroundBoard = <div style={gridStyleBoard}>{cells}</div>
 

@@ -19,7 +19,20 @@ function App() {
     rows: 10,
     cols: 10,
     arrayHori: createInitialArray(10, 9),
-    arrayVert: createInitialArray(9, 10)
+    arrayVert: createInitialArray(9, 10),
+    startCell: [1, 2],
+    blockedCells: [[4,3], [5,6], [0,0]],
+    gates: {
+        1: {orientation: "h", 
+            length: 2,
+            startCell: [3, 2]}, 
+        3: {orientation: "v", 
+            length: 2,
+            startCell: [6, 6]},  
+        0: [{orientation: "h", 
+                length: 1,
+                startCell: [7, 7]}]
+    } 
   });
 
   const [history, setHistory] = useState([structuredClone(puzzle)]);

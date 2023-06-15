@@ -21,6 +21,20 @@
   box-sizing: border-box;
 }
 
+.blockedCell {
+  border: 0.1px rgb(0, 0, 0) solid;
+  box-sizing: border-box;
+  background-color: black;
+}
+
+
+.startCell {
+  border: 0.1px rgb(0, 0, 0) solid;
+  box-sizing: border-box;
+  background-color: rgb(255, 0, 0);
+}
+
+
 .vert--line {
   content:"";
   z-index: -1;
