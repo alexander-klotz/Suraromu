@@ -22,6 +22,8 @@ function App() {
     arrayVert: createInitialArray(9, 10)
   });
 
+  const [history, setHistory] = useState([structuredClone(puzzle)]);
+
 
   function changeSize(newRows, newCols) {
     console.log("rows will be set");
@@ -37,6 +39,8 @@ function App() {
       arrayHori: newArrayHori,
       arrayVert: newArrayVert
     }));
+
+    setHistory((prevHistory) => [...prevHistory, structuredClone(puzzle)]);
   
     console.log("rows are set");
   }
@@ -48,6 +52,8 @@ function App() {
       arrayHori: createInitialArray(prevState.rows, prevState.cols-1),
       arrayVert: createInitialArray(prevState.rows-1, prevState.cols)
     }));
+
+    setHistory((prevHistory) => [...prevHistory, structuredClone(puzzle)]);
   }
 
   return (
@@ -67,8 +73,8 @@ function App() {
 
 
         
-        <Controls deleteFunction={deleteConnections} changeSize={changeSize}/>
-        <Board puzzle={puzzle} setPuzzle={setPuzzle}/>
+        <Controls deleteFunction={deleteConnections} changeSize={changeSize} setPuzzle={setPuzzle} setHistory={setHistory} history={history}/>
+        <Board puzzle={puzzle} setPuzzle={setPuzzle} setHistory={setHistory} history={history}/>
         
         <GameInfo/>
       </div>

@@ -13,6 +13,7 @@ function Grid(props) {
     newArray[rowIndex][colIndex] = !newArray[rowIndex][colIndex];
     // Set the updated array as the new state
     
+
     if (orient === "h"){
       props.setPuzzle((prevState) => ({
         ...prevState,
@@ -20,13 +21,19 @@ function Grid(props) {
       }));
     }
 
+
+    
     if (orient === "v"){
-      props.setPuzzle((prevState) => ({
+      props.setPuzzle((prevState) => {
+        return ({
         ...prevState,
         arrayVert: newArray,
-      }));
+      })}
+      );
+      
     }
 
+    props.setHistory((prevHistory) => [...prevHistory, structuredClone(props.puzzle)]);
   };
 
   const rows = props.puzzle.rows
@@ -78,10 +85,6 @@ function Grid(props) {
   };
 
   const horiLines = Array.from({ length: rows*(columns-1)}).map((_, index) => {
-    console.log("array-hori", props.puzzle.arrayHori)
-    console.log(index)
-    console.log(rows, columns)
-    console.log(Math.floor(index/(columns-1)), index%(columns-1))
     return (    
       <HoriLine 
         index={index} 
@@ -94,7 +97,6 @@ function Grid(props) {
 
   );
 
-  console.log("testing")
 
   const horiLinesGrid = <div style={gridStyleHoriLines}>{horiLines}</div>
   
