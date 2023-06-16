@@ -11,9 +11,8 @@ function Grid(props) {
     const newArray = [...array];
     // Update the value at the specified indices
     newArray[rowIndex][colIndex] = !newArray[rowIndex][colIndex];
-    // Set the updated array as the new state
     
-
+    // Set the updated array as the new state
     if (orient === "h"){
       props.setPuzzle((prevState) => ({
         ...prevState,
@@ -21,8 +20,6 @@ function Grid(props) {
       }));
     }
 
-
-    
     if (orient === "v"){
       props.setPuzzle((prevState) => {
         return ({
@@ -61,19 +58,10 @@ function Grid(props) {
 
   // Type: normal=0 blocked=1 gateHori=2 gateVert=3 gateNumber=4 Start=5
   const cells = Array.from({ length: rows*columns }).map((_, index) => {
-    const idx = [Math.floor(index/(columns)), index%(columns)]
-    let type = 0
 
-    if (props.puzzle.blockedCells.some(cell => JSON.stringify(cell) === JSON.stringify(idx))) {
-      console.log("type=1")
-      type = 1;
-    } else if (props.puzzle.startCell[0] === idx[0] && props.puzzle.startCell[1] === idx[1]) {
-      console.log("type=5")
-      type = 5;
-    }
     //TODO: add logic for the gates! maybe own function that returns type.
 
-    return (<Cell index={index} type={type}/>)
+    return (<Cell index={index} puzzle={props.puzzle}/>)
   }
     
   );

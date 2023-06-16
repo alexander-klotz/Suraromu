@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Bowlby+One+SC');
+
 .App {
   text-align: center;
 }
@@ -16,22 +18,48 @@
   color: #337689;
 }
 
-.cell {
+.cell, .blockedCell, .gateHoriCell, .gateVertCell, .gateNumberCell, .startCell {
   border: 0.1px rgb(0, 0, 0) solid;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .blockedCell {
-  border: 0.1px rgb(0, 0, 0) solid;
-  box-sizing: border-box;
   background-color: black;
+}
+
+.cellTextstart {
+  height: max-content;
+  width: 80%;
+  border: 3px rgb(0, 0, 0) solid;
+  border-radius: 50%;
 }
 
 
 .startCell {
-  border: 0.1px rgb(0, 0, 0) solid;
-  box-sizing: border-box;
-  background-color: rgb(255, 0, 0);
+  background-color: rgba(140, 255, 157, 0.549);
+}
+
+.gateHoriCell {
+  background: repeating-linear-gradient(
+  to right,
+  #000,
+  #000 2px,
+  transparent 2px,
+  transparent 4px
+) no-repeat center/100% 2px;
+}
+
+.gateVertCell{
+  background: repeating-linear-gradient(
+    to bottom,
+    #000,
+    #000 2px,
+    transparent 2px,
+    transparent 4px
+  ) no-repeat center/2px 100%;
 }
 
 
