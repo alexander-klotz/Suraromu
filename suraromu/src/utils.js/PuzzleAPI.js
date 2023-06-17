@@ -4,7 +4,7 @@
 const puzzles = [
     {
         rows: 10,
-        columns: 10,
+        cols: 10,
         startCell: [1, 2],
         blockedCells: [[4,3], [5,6], [0,0]],
         gates: {
@@ -13,7 +13,7 @@ const puzzles = [
                 startCell: [3, 2]}, 
             3: {orientation: "v", 
                 length: 2,
-                startCell: [6, 6]},  
+                startCell: [6, 3]},  
             0: [{orientation: "h", 
                     length: 1,
                     startCell: [7, 7]}]
@@ -23,14 +23,14 @@ const puzzles = [
 
     {
         rows: 20,
-        columns: 10,
+        cols: 10,
         startCell: [1, 2],
         blockedCells: [[4,3], [5,6], [0,0]],
         gates: {
-            1: {orientation: "h", 
+            4: {orientation: "h", 
                 length: 2,
                 startCell: [3, 2]}, 
-            3: {orientation: "v", 
+            5: {orientation: "v", 
                 length: 2,
                 startCell: [6, 6]},  
             0: [{orientation: "h", 
@@ -42,14 +42,14 @@ const puzzles = [
 
     {
         rows: 10,
-        columns: 20,
+        cols: 20,
         startCell: [1, 2],
         blockedCells: [[4,3], [5,6], [0,0]],
         gates: {
-            1: {orientation: "h", 
+            8: {orientation: "h", 
                 length: 2,
                 startCell: [3, 2]}, 
-            3: {orientation: "v", 
+            9: {orientation: "v", 
                 length: 2,
                 startCell: [6, 6]},  
             0: [{orientation: "h", 

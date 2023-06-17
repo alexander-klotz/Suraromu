@@ -53,8 +53,7 @@ const NewGameDialoge = (props) => {
     //TODO: check if puzzle should be generated instead or if it should be a random one from the saved ones
     // (maybe the saved ones should also be from the same api or where should they be saved??) 
     const newPuzzle = getRandomPuzzle()
-    console.log(newPuzzle)
-    props.changeSize(newPuzzle.rows, newPuzzle.columns)
+    props.setNewPuzzle(newPuzzle)
 
     handleClose()
   };

@@ -5,6 +5,7 @@ import HoriLine from './HoriLine'
 
 function Grid(props) {
 
+
   function handleLineClick(rowIndex, colIndex, orient, array) {
     
     // Create a copy of the existing array
@@ -56,11 +57,7 @@ function Grid(props) {
     
   };
 
-  // Type: normal=0 blocked=1 gateHori=2 gateVert=3 gateNumber=4 Start=5
   const cells = Array.from({ length: rows*columns }).map((_, index) => {
-
-    //TODO: add logic for the gates! maybe own function that returns type.
-
     return (<Cell index={index} puzzle={props.puzzle}/>)
   }
     
@@ -126,11 +123,11 @@ function Grid(props) {
   const vertLines = Array.from({ length: (rows-1)*columns}).map((_, index) => {
     return (
       <VertLine 
-      index={index} 
-      handleLineClick={() => 
-        handleLineClick(Math.floor(index/(columns)), index%(columns), "v", props.puzzle.arrayVert)} 
-      isSet={props.puzzle.arrayVert[Math.floor(index/(columns))][index%(columns)]}
-    />
+        index={index} 
+        handleLineClick={() => 
+          handleLineClick(Math.floor(index/(columns)), index%(columns), "v", props.puzzle.arrayVert)} 
+        isSet={props.puzzle.arrayVert[Math.floor(index/(columns))][index%(columns)]}
+      />
     )
   }
 

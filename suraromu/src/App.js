@@ -28,7 +28,7 @@ function App() {
             startCell: [3, 2]}, 
         3: {orientation: "v", 
             length: 2,
-            startCell: [6, 6]},  
+            startCell: [5, 3]},  
         0: [{orientation: "h", 
                 length: 1,
                 startCell: [7, 7]}]
@@ -37,18 +37,18 @@ function App() {
 
   const [history, setHistory] = useState([structuredClone(puzzle)]);
 
-  function changeSize(newRows, newCols) {
+  function setNewPuzzle(newPuzzle) {
   
-    const newArrayHori = createInitialArray(newRows, newCols - 1);
-    const newArrayVert = createInitialArray(newRows - 1, newCols);
+    const newArrayHori = createInitialArray(newPuzzle.rows, newPuzzle.cols - 1);
+    const newArrayVert = createInitialArray(newPuzzle.rows - 1, newPuzzle.cols);
 
-    setPuzzle((prevState) => ({
-      ...prevState,
-      rows: newRows,
-      cols: newCols,
+    setPuzzle({
+      ...newPuzzle,
       arrayHori: newArrayHori,
       arrayVert: newArrayVert
-    }));
+      }
+    );
+
 
     setHistory((prevHistory) => [...prevHistory, structuredClone(puzzle)]);
   
@@ -82,7 +82,7 @@ function App() {
 
 
         
-        <Controls deleteFunction={deleteConnections} changeSize={changeSize} setPuzzle={setPuzzle} setHistory={setHistory} history={history}/>
+        <Controls deleteFunction={deleteConnections} setNewPuzzle={setNewPuzzle} setPuzzle={setPuzzle} setHistory={setHistory} history={history}/>
         <Board puzzle={puzzle} setPuzzle={setPuzzle} setHistory={setHistory} history={history}/>
         
         <GameInfo/>

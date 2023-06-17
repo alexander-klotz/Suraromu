@@ -42,6 +42,10 @@
   background-color: rgba(140, 255, 157, 0.549);
 }
 
+.gateNumberCell {
+  background-color: rgba(0, 0, 0, 0.549);
+}
+
 .gateHoriCell {
   background: repeating-linear-gradient(
   to right,
