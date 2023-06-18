@@ -126,7 +126,6 @@ function Grid(props) {
 
   );
 
-  console.log(cellHeight, cellWidth)
 
   const horiLinesGrid = <div style={gridStyleHoriLines}>{horiLines}</div>
   
