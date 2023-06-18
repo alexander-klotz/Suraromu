@@ -2,8 +2,32 @@ import React from 'react'
 import Cell from './Cell'
 import VertLine from './VertLine'
 import HoriLine from './HoriLine'
+import { useRef, useEffect, useState } from 'react';
 
 function Grid(props) {
+
+  const gridContainerRef = useRef(null);
+  const [containerHeight, setContainerHeight] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (gridContainerRef.current) {
+        const { height } = gridContainerRef.current.getBoundingClientRect();
+        setContainerHeight(height);
+      }
+    };
+
+    // Initial calculation
+    handleResize();
+
+    // Recalculate on window resize
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
 
   function handleLineClick(rowIndex, colIndex, orient, array) {
@@ -37,6 +61,8 @@ function Grid(props) {
   const rows = props.puzzle.rows
   const columns = props.puzzle.cols
   const cellSize = Math.min(100/columns, 100/rows) 
+
+  const cellHeight = containerHeight / rows;
   
   const gridStyleBoard = {
     display: 'grid',
@@ -63,7 +89,7 @@ function Grid(props) {
     
   );
 
-  const backgroundBoard = <div style={gridStyleBoard}>{cells}</div>
+  const backgroundBoard = <div ref={gridContainerRef} style={gridStyleBoard}>{cells}</div>
 
   const gridStyleHoriLines = {
     display: 'grid',
@@ -77,7 +103,7 @@ function Grid(props) {
     aspectRatio: "1/1",
     left: 0,
     right: 0,
-    top: `${cellSize*0.175}%`,
+    top: `${cellHeight*0.25}px`,
     bottom: "auto",
     position: "absolute",
     justifyContent: "center",
@@ -112,7 +138,7 @@ function Grid(props) {
     aspectRatio: "1/1",
     left: 0,
     right: 0,
-    top: `${cellSize*0.35}%`,
+    top: `${cellHeight*0.5}px`,
     bottom: "auto",
     position: "absolute",
     justifyContent: "center",
