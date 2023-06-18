@@ -7,12 +7,14 @@ import { useRef, useEffect, useState } from 'react';
 function Grid(props) {
 
   const gridContainerRef = useRef(null);
+  const [containerWidth, setContainerWidth] = useState(0);
   const [containerHeight, setContainerHeight] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {
       if (gridContainerRef.current) {
-        const { height } = gridContainerRef.current.getBoundingClientRect();
+        const { width, height } = gridContainerRef.current.getBoundingClientRect();
+        setContainerWidth(width);
         setContainerHeight(height);
       }
     };
@@ -62,6 +64,7 @@ function Grid(props) {
   const columns = props.puzzle.cols
   const cellSize = Math.min(100/columns, 100/rows) 
 
+  const cellWidth = containerWidth / columns;
   const cellHeight = containerHeight / rows;
   
   const gridStyleBoard = {
@@ -103,7 +106,7 @@ function Grid(props) {
     aspectRatio: "1/1",
     left: 0,
     right: 0,
-    top: `${cellHeight*0.25}px`,
+    top: `${Math.min(cellHeight, cellWidth)*0.25}px`,
     bottom: "auto",
     position: "absolute",
     justifyContent: "center",
@@ -123,6 +126,7 @@ function Grid(props) {
 
   );
 
+  console.log(cellHeight, cellWidth)
 
   const horiLinesGrid = <div style={gridStyleHoriLines}>{horiLines}</div>
   
@@ -138,7 +142,7 @@ function Grid(props) {
     aspectRatio: "1/1",
     left: 0,
     right: 0,
-    top: `${cellHeight*0.5}px`,
+    top: `${Math.min(cellHeight, cellWidth)*0.5}px`,
     bottom: "auto",
     position: "absolute",
     justifyContent: "center",
