@@ -3,6 +3,7 @@ import Board from './components/Board';
 import { useState } from 'react';
 import GameInfo from './components/GameInfo';
 import Controls from './components/Controls';
+import Toolbar from './components/Toolbar';
 
 function App() {
 
@@ -10,10 +11,12 @@ function App() {
   const createInitialArray = (rows, cols) => {
     const newArray = [];
     for (let i = 0; i < rows; i++) {
-      newArray.push(new Array(cols).fill(false));
+      newArray.push(new Array(cols).fill(0));
     }
     return newArray;
   };
+
+  const [toolType, setToolType] = useState(1);
 
   const [puzzle, setPuzzle] = useState({
     rows: 10,
@@ -36,6 +39,7 @@ function App() {
   });
 
   const [history, setHistory] = useState([structuredClone(puzzle)]);
+
 
   function setNewPuzzle(newPuzzle) {
   
@@ -81,9 +85,9 @@ function App() {
 
 
 
-        
+        <Toolbar toolType={toolType} setToolType={setToolType}/>
         <Controls deleteFunction={deleteConnections} setNewPuzzle={setNewPuzzle} setPuzzle={setPuzzle} setHistory={setHistory} history={history}/>
-        <Board puzzle={puzzle} setPuzzle={setPuzzle} setHistory={setHistory} history={history}/>
+        <Board puzzle={puzzle} setPuzzle={setPuzzle} setHistory={setHistory} history={history} toolType={toolType}/>
         
         <GameInfo/>
       </div>

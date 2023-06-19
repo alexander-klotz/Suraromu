@@ -34,10 +34,30 @@ function Grid(props) {
 
   function handleLineClick(rowIndex, colIndex, orient, array) {
     
+    // skip since it's a invalid line
+    if(array[rowIndex][colIndex] === -1) {
+      return 
+    }
+
     // Create a copy of the existing array
     const newArray = [...array];
+
+
     // Update the value at the specified indices
-    newArray[rowIndex][colIndex] = !newArray[rowIndex][colIndex];
+
+
+    if(newArray[rowIndex][colIndex] === 0) {
+      //normal empty line
+      newArray[rowIndex][colIndex] = props.toolType
+    } else if(newArray[rowIndex][colIndex] === 1) {
+      //filled line
+      newArray[rowIndex][colIndex] = props.toolType === 1 ? 0 : 2
+    } else if(newArray[rowIndex][colIndex] === 2){
+      //crossed out line
+      newArray[rowIndex][colIndex] =  props.toolType === 1 ? 1 : 0
+    }
+    
+
     
     // Set the updated array as the new state
     if (orient === "h"){
@@ -118,8 +138,8 @@ function Grid(props) {
       <HoriLine 
         index={index} 
         handleLineClick={() => 
-          handleLineClick(Math.floor(index/(columns)), index%(columns), "h", props.puzzle.arrayHori)} 
-        isSet={props.puzzle.arrayHori[Math.floor(index/(columns))][index%(columns)]}
+          handleLineClick(Math.floor(index/(columns-1)), index%(columns-1), "h", props.puzzle.arrayHori)} 
+        isSet={props.puzzle.arrayHori[Math.floor(index/(columns-1))][index%(columns-1)]}
       />
     )
   }
@@ -150,6 +170,7 @@ function Grid(props) {
   };
 
   const vertLines = Array.from({ length: (rows-1)*columns}).map((_, index) => {
+    
     return (
       <VertLine 
         index={index} 
