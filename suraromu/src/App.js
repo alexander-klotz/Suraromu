@@ -24,7 +24,7 @@ function App() {
     arrayHori: createInitialArray(10, 9),
     arrayVert: createInitialArray(9, 10),
     startCell: [1, 2],
-    blockedCells: [[4,3], [5,6], [0,0]],
+    blockedCells: [[9,3], [5,6], [0,0]],
     gates: {
         1: {orientation: "h", 
             length: 2,
@@ -34,7 +34,11 @@ function App() {
             startCell: [5, 3]},  
         0: [{orientation: "h", 
                 length: 1,
-                startCell: [7, 7]}]
+                startCell: [7, 7]}, 
+                {orientation: "v", 
+                length: 1,
+                startCell: [7, 1]}
+              ]
     } 
   });
 

@@ -34,6 +34,34 @@ export default function Cell(props) {
     const classNames = ["cell", "blockedCell", "gateHoriCell", "gateVertCell", "gateNumberCell", "startCell"]
     const idx2D = [Math.floor(props.index/(props.puzzle.cols)), props.index%(props.puzzle.cols)]
 
+    let vertiGateIdxs = []
+    let horiGateIdxs = []
+    for (let key in props.puzzle.gates) {
+        if (key === '0') {
+            /* all the unordered gates
+            for (let gateKey in props.puzzle.gates[key]) {
+                const possibleGateCells = getBlockedGateCells(props.puzzle.gates[key][gateKey])
+                if(possibleGateCells.some(cell => JSON.stringify(cell) === JSON.stringify(idx))) {
+                    return "0";
+                }
+            }*/
+        } else {
+            // all the ordered cells
+            const curGate = props.puzzle.gates[key]
+            const length = curGate.length
+            if(curGate.orientation === "h"){
+                horiGateIdxs = horiGateIdxs.concat(Array.from({ length }, (_, index) => [curGate.startCell[0], curGate.startCell[1] + index]))
+            }
+            if(curGate.orientation === "v"){
+                vertiGateIdxs = vertiGateIdxs.concat(Array.from({ length }, (_, index) => [curGate.startCell[0] + index, curGate.startCell[1]]))
+            }
+            
+        }
+    }
+
+    //console.log(vertiGateIdxs, horiGateIdxs)
+
+
     function getCellType(idx) {
         let type = 0
 
@@ -42,6 +70,10 @@ export default function Cell(props) {
         } else if (props.puzzle.startCell[0] === idx[0] && props.puzzle.startCell[1] === idx[1]) {
             type = 5;
             content = countGates(props.puzzle.gates).toString();
+        }else if (vertiGateIdxs.some(cell => JSON.stringify(cell) === JSON.stringify(idx))) {
+            type = 3;
+        }else if (horiGateIdxs.some(cell => JSON.stringify(cell) === JSON.stringify(idx))) {
+                type = 2;
         } else {
             switch(gateNumberCell(idx)) {
                 case "0":
@@ -84,7 +116,7 @@ export default function Cell(props) {
     function getBlockedGateCells(gate) {
         const cells = []
         const row = gate.startCell[0]
-        const col = gate.startCell[0]
+        const col = gate.startCell[1]
 
         if(gate.orientation === "h") {
             cells.push([row, col-1])
@@ -93,6 +125,8 @@ export default function Cell(props) {
             cells.push([row-1, col])
             cells.push([row+gate.length, col])
         }
+
+        console.log(gate, cells)
         return cells
     }
 
