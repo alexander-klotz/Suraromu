@@ -38,13 +38,18 @@ export default function Cell(props) {
     let horiGateIdxs = []
     for (let key in props.puzzle.gates) {
         if (key === '0') {
-            /* all the unordered gates
+            // all the unordered gates
             for (let gateKey in props.puzzle.gates[key]) {
-                const possibleGateCells = getBlockedGateCells(props.puzzle.gates[key][gateKey])
-                if(possibleGateCells.some(cell => JSON.stringify(cell) === JSON.stringify(idx))) {
-                    return "0";
+                const curGate = props.puzzle.gates[key][gateKey]
+                const length = curGate.length
+                if(curGate.orientation === "h"){
+                    horiGateIdxs = horiGateIdxs.concat(Array.from({ length }, (_, index) => [curGate.startCell[0], curGate.startCell[1] + index]))
                 }
-            }*/
+                if(curGate.orientation === "v"){
+                    vertiGateIdxs = vertiGateIdxs.concat(Array.from({ length }, (_, index) => [curGate.startCell[0] + index, curGate.startCell[1]]))
+                }
+
+            }
         } else {
             // all the ordered cells
             const curGate = props.puzzle.gates[key]
