@@ -31,7 +31,6 @@ function Grid(props) {
     };
   }, []);
 
-
   function handleLineClick(rowIndex, colIndex, orient, array) {
     
     // skip since it's a invalid line

@@ -7,7 +7,6 @@ import Toolbar from './components/Toolbar';
 
 function App() {
 
-
   const createInitialArray = (rows, cols) => {
     const newArray = [];
     for (let i = 0; i < rows; i++) {
@@ -23,32 +22,38 @@ function App() {
     cols: 10,
     arrayHori: createInitialArray(10, 9),
     arrayVert: createInitialArray(9, 10),
-    startCell: [1, 2],
-    blockedCells: [[9,3], [5,6], [0,0]],
+    startCell: [0, 0],
+    blockedCells: [],
     gates: {
-        1: {orientation: "h", 
-            length: 2,
-            startCell: [3, 2]}, 
-        3: {orientation: "v", 
-            length: 2,
-            startCell: [5, 3]},  
-        0: [{orientation: "h", 
-                length: 1,
-                startCell: [7, 7]}, 
-                {orientation: "v", 
-                length: 1,
-                startCell: [7, 1]}
-              ]
     } 
   });
 
-  const [history, setHistory] = useState([structuredClone(puzzle)]);
+  
 
+  const [history, setHistory] = useState([structuredClone(puzzle)]);
+  
+  function blockLine(row, col, arr){
+    if (row >= 0 && row < arr.length && col >= 0 && col < arr[row].length) {
+      arr[row][col] = -1;
+    }
+  }
 
   function setNewPuzzle(newPuzzle) {
   
     const newArrayHori = createInitialArray(newPuzzle.rows, newPuzzle.cols - 1);
     const newArrayVert = createInitialArray(newPuzzle.rows - 1, newPuzzle.cols);
+  
+    // set the blocked lines from the blockedCells
+    for (let blockedCell of newPuzzle.blockedCells){
+
+      // Create a copy of the existing array
+      let row = blockedCell[0]
+      let col = blockedCell[1]
+      blockLine(row, col-1, newArrayHori)
+      blockLine(row, col, newArrayHori)
+      blockLine(row-1, col, newArrayVert)
+      blockLine(row, col, newArrayVert)
+    }
 
     setPuzzle({
       ...newPuzzle,
@@ -57,18 +62,32 @@ function App() {
       }
     );
 
-
     setHistory((prevHistory) => [...prevHistory, structuredClone(puzzle)]);
   
   }
 
+  function clearArray(array) {
+    for (let i = 0; i < array.length; i++) {
+      const row = array[i];
+      for (let j = 0; j < row.length; j++) {
+        const cell = row[j];
+        if (cell !== -1) {
+          array[i][j] = 0;
+        }
+      }
+    }
+    return array;
+  }
 
   function deleteConnections(){
-    setPuzzle((prevState) => ({
+    setPuzzle((prevState) => {
+      const arrayHoriNew = clearArray(prevState.arrayHori)
+      const arrayVertNew = clearArray(prevState.arrayVert)
+      return ({
       ...prevState,
-      arrayHori: createInitialArray(prevState.rows, prevState.cols-1),
-      arrayVert: createInitialArray(prevState.rows-1, prevState.cols)
-    }));
+      arrayHori: arrayHoriNew,
+      arrayVert: arrayVertNew,
+    })});
 
     setHistory((prevHistory) => [...prevHistory, structuredClone(puzzle)]);
   }
@@ -86,11 +105,9 @@ function App() {
         </header>
 
         
-
-
-
-        <Toolbar toolType={toolType} setToolType={setToolType}/>
+        
         <Controls deleteFunction={deleteConnections} setNewPuzzle={setNewPuzzle} setPuzzle={setPuzzle} setHistory={setHistory} history={history}/>
+        <Toolbar toolType={toolType} setToolType={setToolType}/>
         <Board puzzle={puzzle} setPuzzle={setPuzzle} setHistory={setHistory} history={history} toolType={toolType}/>
         
         <GameInfo/>

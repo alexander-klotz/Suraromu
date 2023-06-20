@@ -64,8 +64,6 @@ export default function Cell(props) {
         }
     }
 
-    //console.log(vertiGateIdxs, horiGateIdxs)
-
 
     function getCellType(idx) {
         let type = 0
@@ -131,7 +129,6 @@ export default function Cell(props) {
             cells.push([row+gate.length, col])
         }
 
-        console.log(gate, cells)
         return cells
     }
 
