@@ -1,5 +1,7 @@
 import Button from '@mui/material/Button';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CloseIcon from '@mui/icons-material/Close';
+import TimelineIcon from '@mui/icons-material/Timeline';
 
 const Toolbar = (props) => {
 
@@ -21,19 +23,19 @@ const Toolbar = (props) => {
     })
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-evenly'}}>
         <ThemeProvider theme={theme}>
             <Button
                 onClick={() => handleChoiceClick(1)}
                 variant={props.toolType === 1 ? 'contained' : 'outlined'}
             >
-                Line
+                <TimelineIcon style={{ color: 'green', paddingRight:"20%"}}/> Line
             </Button>
             <Button
                 onClick={() => handleChoiceClick(2)}
                 variant={props.toolType === 2 ? 'contained' : 'outlined'}
             >
-                BlockLine
+                <CloseIcon style={{ color: 'red', paddingRight:"5%"}}/> BlockLine
             </Button>
         </ThemeProvider>
         </div>

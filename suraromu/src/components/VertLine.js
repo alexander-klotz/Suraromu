@@ -10,7 +10,8 @@ export default function VertLine(props) {
   
     const handleMouseOut = () => {
       setIsHovering(false);
-    };    
+    };
+    
     return(
     <div key={props.index} className="vert--line--hitbox" onClick={props.handleLineClick} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
         {props.isSet === 1 && (!isHovering || props.toolType === 1) && 
