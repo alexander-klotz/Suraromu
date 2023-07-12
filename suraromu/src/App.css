@@ -82,24 +82,34 @@
   border-top: 4px solid #358864;
   border-radius: 1px;
   width: 102%;
-  position: relative;
-  top: 50%;
-  
+
+}
+
+.hori--line--hitbox:hover {
+  opacity: 0.6
+}
+
+.vert--line--hitbox:hover {
+  opacity: 0.6
 }
 
 .hori--line--hitbox {
   z-index: 10;
   text-align: center;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .vert--line--hitbox {
   z-index: 10;
   text-align: center;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
-
 
 
 .controlButton {
@@ -117,12 +127,4 @@
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-evenly;
-}
-
-.num {
-  width: 48;
-  height: 48;
-  border: 2px solid rgb(21, 0, 255);
-  justify-content: center;
-  margin: auto;
 }

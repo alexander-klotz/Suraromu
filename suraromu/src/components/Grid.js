@@ -139,6 +139,7 @@ function Grid(props) {
         handleLineClick={() => 
           handleLineClick(Math.floor(index/(columns-1)), index%(columns-1), "h", props.puzzle.arrayHori)} 
         isSet={props.puzzle.arrayHori[Math.floor(index/(columns-1))][index%(columns-1)]}
+        toolType={props.toolType}
       />
     )
   }
@@ -176,6 +177,7 @@ function Grid(props) {
         handleLineClick={() => 
           handleLineClick(Math.floor(index/(columns)), index%(columns), "v", props.puzzle.arrayVert)} 
         isSet={props.puzzle.arrayVert[Math.floor(index/(columns))][index%(columns)]}
+        toolType={props.toolType}
       />
     )
   }
