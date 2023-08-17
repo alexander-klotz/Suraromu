@@ -11,6 +11,7 @@ export default function HoriLine(props) {
     const handleMouseOut = () => {
       setIsHovering(false);
     };
+
     
     return(
     <div key={props.index} className="hori--line--hitbox" onClick={props.handleLineClick} onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
@@ -20,7 +21,7 @@ export default function HoriLine(props) {
             <CloseIcon style={{ color: 'red' }}/>}
         
         {/* hovering animations */}
-        {isHovering && (props.toolType === 1 ? 
+        {isHovering && props.hoverable && (props.toolType === 1 ? 
         props.isSet !== 1 && <div className="hori--line"></div>:
         props.isSet !== 2 && <CloseIcon style={{ color: 'red'}}/>
         )}

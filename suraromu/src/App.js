@@ -38,6 +38,22 @@ function App() {
     }
   }
 
+  function getBlockedGateCells(gate) {
+    const cells = []
+    const row = gate.startCell[0]
+    const col = gate.startCell[1]
+
+    if(gate.orientation === "h") {
+        cells.push([row, col-1])
+        cells.push([row, col+gate.length])
+    }else {
+        cells.push([row-1, col])
+        cells.push([row+gate.length, col])
+    }
+
+    return cells
+  }
+
   function setNewPuzzle(newPuzzle) {
   
     const newArrayHori = createInitialArray(newPuzzle.rows, newPuzzle.cols - 1);
@@ -46,7 +62,6 @@ function App() {
     // set the blocked lines from the blockedCells
     for (let blockedCell of newPuzzle.blockedCells){
 
-      // Create a copy of the existing array
       let row = blockedCell[0]
       let col = blockedCell[1]
       blockLine(row, col-1, newArrayHori)
@@ -54,6 +69,40 @@ function App() {
       blockLine(row-1, col, newArrayVert)
       blockLine(row, col, newArrayVert)
     }
+
+    // set the blocked lines from the gateCells
+    for (let key in newPuzzle.gates) {
+      if (key === '0') {
+        // all the unordered gates
+        for (let gateKey in newPuzzle.gates[key]) {
+          const possibleGateCells = getBlockedGateCells(newPuzzle.gates[key][gateKey])
+          console.log("pgcu", possibleGateCells)
+          for (let idx in possibleGateCells){
+            let row = possibleGateCells[idx][0]
+            let col = possibleGateCells[idx][1]
+            console.log(row, col)
+            blockLine(row, col-1, newArrayHori)
+            blockLine(row, col, newArrayHori)
+            blockLine(row-1, col, newArrayVert)
+            blockLine(row, col, newArrayVert)
+          }
+        }
+      } else {
+        // all the ordered cells
+        const possibleGateCells = getBlockedGateCells(newPuzzle.gates[key])
+        console.log("pgco", possibleGateCells)
+        for (let idx in possibleGateCells){
+          let row = possibleGateCells[idx][0]
+          let col = possibleGateCells[idx][1]
+          blockLine(row, col-1, newArrayHori)
+          blockLine(row, col, newArrayHori)
+          blockLine(row-1, col, newArrayVert)
+          blockLine(row, col, newArrayVert)
+        }
+      }
+    }
+
+    
 
     setPuzzle({
       ...newPuzzle,

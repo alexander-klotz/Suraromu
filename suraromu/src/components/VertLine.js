@@ -19,8 +19,8 @@ export default function VertLine(props) {
         {props.isSet === 2 && (!isHovering || props.toolType === 2) &&
             <CloseIcon style={{ color: 'red' }}/>}
         
-        {/* hovering animations */}
-        {isHovering && (props.toolType === 1 ? 
+        {/* hovering animations TODO: blocked cells from gates also need to be set to -1 in the initialization of the array!!!!*/ }
+        {isHovering && props.hoverable && (props.toolType === 1 ? 
         props.isSet !== 1 && <div className="vert--line"></div>:
         props.isSet !== 2 && <CloseIcon style={{ color: 'red'}}/>
         )}    </div>

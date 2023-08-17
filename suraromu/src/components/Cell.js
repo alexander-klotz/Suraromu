@@ -149,7 +149,6 @@ export default function Cell(props) {
       }
 
 
-    // TODO maybe try to get the hori and vert lines back to this to get them centered and also be able to set them to blocked
     return(
         <div ref={outerDivRef} key={props.index} className={classNames[getCellType(idx2D)]}>
             <p className={"cellText" + (getCellType(idx2D) === 5 ? "start" : "")}>{content}</p>
