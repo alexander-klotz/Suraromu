@@ -2,7 +2,7 @@ import React from 'react'
 import Cell from './Cell'
 import VertLine from './VertLine'
 import HoriLine from './HoriLine'
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 
 function Grid(props) {
 
@@ -105,8 +105,109 @@ function Grid(props) {
     
   };
 
+
+  const vertiGateIdxs = useMemo(() => computeGateIdxs(props.puzzle.gates, "v"), [props.puzzle.gates]);
+  const horiGateIdxs = useMemo(() => computeGateIdxs(props.puzzle.gates, "h"), [props.puzzle.gates]);
+
+  function computeGateIdxs(gates, orientation) {
+      let gateIdxs = [];
+      for (let key in gates) {
+          if (key === '0') {
+              // all the unordered gates
+              for (let gateKey in gates[key]) {
+                  const curGate = gates[key][gateKey];
+                  if(curGate.orientation === orientation){
+                      const length = curGate.length;
+                      gateIdxs = gateIdxs.concat(Array.from({ length }, (_, index) => {
+                          return orientation === "h" ? [curGate.startCell[0], curGate.startCell[1] + index] : [curGate.startCell[0] + index, curGate.startCell[1]];
+                      }));
+                  }
+              }
+          } else {
+              // all the ordered cells
+              const curGate = gates[key];
+              if(curGate.orientation === orientation){
+                  if(curGate?.direction !== undefined){
+                    const length = curGate.length;
+                    gateIdxs = gateIdxs.concat(Array.from({ length }, (_, index) => {
+                      if(curGate.direction === "w") return [curGate.startCell[0], curGate.startCell[1] - index]
+                      if(curGate.direction === "e") return [curGate.startCell[0], curGate.startCell[1] + index]
+                      if(curGate.direction === "s") return [curGate.startCell[0] + index, curGate.startCell[1]]
+                      if(curGate.direction === "n") return [curGate.startCell[0] - index, curGate.startCell[1]]
+                      return []
+                    }));
+                  }else{
+                    const length = curGate.length;
+                    gateIdxs = gateIdxs.concat(Array.from({ length }, (_, index) => {
+                        return orientation === "h" ? [curGate.startCell[0], curGate.startCell[1] + index] : [curGate.startCell[0] + index, curGate.startCell[1]];
+                    }));
+                  }
+                  
+              }
+          }
+      }
+      return gateIdxs;
+  }
+
+  // create a grid that stores the gate numbers
+  let gateGrid = Array.from({ length: props.puzzle.rows }, () => Array(props.puzzle.cols).fill(""));
+  for (let key in props.puzzle.gates) {
+    if (key === '0') {
+        // all the unordered gates
+        for (let gateKey in props.puzzle.gates[key]) {
+            const possibleGateCells = getBlockedGateCells(props.puzzle.gates[key][gateKey])
+            for (let idx of possibleGateCells){
+              if (idx[0] >= 0 && idx[0] < props.puzzle.rows && idx[1] >= 0 && idx[1] < props.puzzle.cols ){
+                gateGrid[idx[0]][idx[1]] = '0'
+              }
+            }
+            
+        }
+    } else {
+        // all the ordered cells
+        const possibleGateCells = getBlockedGateCells(props.puzzle.gates[key])
+        for (let idx of possibleGateCells){
+          if (idx[0] >= 0 && idx[0] < props.puzzle.rows && idx[1] >= 0 && idx[1] < props.puzzle.cols ){
+            if(props.puzzle.gates[key]?.direction !== undefined){
+              if(props.puzzle.gates[key].direction === "w") gateGrid[idx[0]][idx[1]] = key.toString() + "←";
+              if(props.puzzle.gates[key].direction === "e") gateGrid[idx[0]][idx[1]] = key.toString() + "→";
+              if(props.puzzle.gates[key].direction === "s") gateGrid[idx[0]][idx[1]] = key.toString() + "↓";
+              if(props.puzzle.gates[key].direction === "n") gateGrid[idx[0]][idx[1]] = key.toString() + "↑";
+              
+              
+            }else{
+              gateGrid[idx[0]][idx[1]] = key.toString();
+            }
+            
+          }
+        }
+    }
+  }
+
+  function getBlockedGateCells(gate) {
+    const cells = []
+    const row = gate.startCell[0]
+    const col = gate.startCell[1]
+
+    if(gate?.direction !== undefined){
+      if (gate.direction === "w") cells.push([row, col+1])
+      if (gate.direction === "e") cells.push([row, col-1])
+      if (gate.direction === "s") cells.push([row-1, col])
+      if (gate.direction === "n") cells.push([row+1, col])
+    }
+    else if(gate.orientation === "h") {
+        cells.push([row, col-1])
+        cells.push([row, col+gate.length])
+    }else {
+        cells.push([row-1, col])
+        cells.push([row+gate.length, col])
+    }
+
+    return cells
+  }
+
   const cells = Array.from({ length: rows*columns }).map((_, index) => {
-    return (<Cell index={index} puzzle={props.puzzle}/>)
+    return (<Cell index={index} puzzle={props.puzzle} vertiGateIdxs={vertiGateIdxs} horiGateIdxs={horiGateIdxs} gateGrid={gateGrid} />)
   }
     
   );
