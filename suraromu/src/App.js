@@ -76,11 +76,10 @@ function App() {
         // all the unordered gates
         for (let gateKey in newPuzzle.gates[key]) {
           const possibleGateCells = getBlockedGateCells(newPuzzle.gates[key][gateKey])
-          console.log("pgcu", possibleGateCells)
           for (let idx in possibleGateCells){
             let row = possibleGateCells[idx][0]
             let col = possibleGateCells[idx][1]
-            console.log(row, col)
+            
             blockLine(row, col-1, newArrayHori)
             blockLine(row, col, newArrayHori)
             blockLine(row-1, col, newArrayVert)
@@ -90,7 +89,7 @@ function App() {
       } else {
         // all the ordered cells
         const possibleGateCells = getBlockedGateCells(newPuzzle.gates[key])
-        console.log("pgco", possibleGateCells)
+        
         for (let idx in possibleGateCells){
           let row = possibleGateCells[idx][0]
           let col = possibleGateCells[idx][1]
