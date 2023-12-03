@@ -1,6 +1,5 @@
 
-// TODO: maybe change this so we specify not only start, orientation, and length of gate
-// TODO: also maybe change the way all other gates are saved in 0.   
+
 const puzzles = [
     {
         rows: 10,
@@ -29,13 +28,13 @@ const puzzles = [
         gates: {
             4: {orientation: "h", 
                 length: 2,
-                startCell: [3, 2]}, 
+                startCell: [3, 8]}, 
             5: {orientation: "v", 
                 length: 2,
                 startCell: [6, 6]},  
             0: [{orientation: "h", 
                     length: 1,
-                    startCell: [7, 7]}]
+                    startCell: [9, 7]}]
         } 
 
     },
@@ -63,5 +62,31 @@ const puzzles = [
 
 export default function getRandomPuzzle() {
     return puzzles[Math.floor(Math.random() * puzzles.length)]
+}
+
+
+export default function getPuzzles(difficulty, size) {
+
+    let sortedPuzzles = []
+    if (difficulty === 'easy'){
+        let unsortedPuzzles = puzzles['0'].concat(puzzles['1'])
+        sortedPuzzles = unsortedPuzzles.sort((a, b) => (a.rows * a.cols) - (b.rows * b.cols));
+    }
+    else if (difficulty === 'medium'){
+        let unsortedPuzzles = puzzles['2'].concat(puzzles['3'])
+        sortedPuzzles = unsortedPuzzles.sort((a, b) => (a.rows * a.cols) - (b.rows * b.cols));
+    }
+    else if (difficulty === 'hard'){
+        let unsortedPuzzles = puzzles['4'].concat(puzzles['5'], puzzles['6'], puzzles['8'])
+        sortedPuzzles = unsortedPuzzles.sort((a, b) => (a.rows * a.cols) - (b.rows * b.cols));
+    }
+
+    const partSize = Math.ceil(sortedPuzzles.length / 3);
+
+    if (size === 'small') return sortedPuzzles.slice(0, partSize);
+    if (size === 'medium') return sortedPuzzles.slice(partSize, partSize * 2);
+    if (size === 'big') return sortedPuzzles.slice(partSize * 2);
+
+    return []
 }
 
