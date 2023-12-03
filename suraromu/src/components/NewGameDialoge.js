@@ -14,9 +14,17 @@ import {
 } from '@mui/material';
 
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import getRandomPuzzle from '../utils.js/PuzzleAPI';
+import getPuzzles from '../utils.js/premadePuzzles';
 
 const NewGameDialoge = (props) => {
+
+  const createInitialArray = (rows, cols) => {
+    const newArray = [];
+    for (let i = 0; i < rows; i++) {
+      newArray.push(new Array(cols).fill(0));
+    }
+    return newArray;
+  };
 
   const buttonStyle = {
     color: "black",
@@ -31,6 +39,7 @@ const NewGameDialoge = (props) => {
     size: 'small',
     difficulty: 'easy',
     generated: false,
+    puzzle: ''
   });
 
   const handleOpen = () => {
@@ -48,11 +57,24 @@ const NewGameDialoge = (props) => {
     }));
   };
 
+  const puzzles = getPuzzles(objectData.difficulty, objectData.size)
+  const puzzleOptions = Array.from({ length: puzzles.length }, (_, index) => index);
+
   const handleConfirm = () => {
-  
-    //TODO: check if puzzle should be generated instead or if it should be a random one from the saved ones
-    // (maybe the saved ones should also be from the same api or where should they be saved??) 
-    const newPuzzle = getRandomPuzzle()
+    
+    let newPuzzle = {
+      rows: 10,
+      cols: 10,
+      arrayHori: createInitialArray(10, 9),
+      arrayVert: createInitialArray(9, 10),
+      startCell: [0, 0],
+      blockedCells: [],
+      gates: {
+      }}
+    if (objectData.puzzle !== ''){
+      newPuzzle = puzzles[objectData.puzzle]
+    }
+    
     props.setNewPuzzle(newPuzzle)
 
     handleClose()
@@ -94,6 +116,24 @@ const NewGameDialoge = (props) => {
               <MenuItem value="hard">Hard</MenuItem>
             </Select>
           </FormControl>
+          {!objectData.generated && 
+              <FormControl sx={{ m: 1, minWidth: 200}}>
+                <InputLabel id="puzzle-select-label">Puzzle</InputLabel>
+                <Select
+                  labelId="puzzle-select-label"
+                  id="puzzle-select"
+                  value={objectData.puzzle}
+                  onChange={(event) => handleValueChange('puzzle', event.target.value)}
+                  label="Puzzle"
+                >
+                  {puzzleOptions.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            }
           <FormControlLabel sx={{ m: 1, minWidth: 200}}
             control={
               <Checkbox
@@ -104,6 +144,8 @@ const NewGameDialoge = (props) => {
             }
             label="Generated"
           />
+
+          
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
