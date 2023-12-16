@@ -86,7 +86,7 @@ const NewGameDialoge = (props) => {
         New
       </Button>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Edit Object</DialogTitle>
+        <DialogTitle>Choose Puzzle</DialogTitle>
         <DialogContent style={{ display: 'flex', justifyContent: 'center' ,   flexDirection: "column",   alignItems: "flex-start",}}>
           <FormControl sx={{ m: 1, minWidth: 200}}>
             <InputLabel id="size-select-label">Size</InputLabel>
