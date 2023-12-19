@@ -19,8 +19,8 @@
 }
 
 .cell, .blockedCell, .gateHoriCell, .gateVertCell, .gateNumberCell, .startCell {
-  border: 0.1px rgb(0, 0, 0) solid;
-  box-sizing: border-box;
+  border: 1px rgb(0, 0, 0) solid;
+  margin: -0.5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,13 +33,14 @@
 .cellTextstart {
   height: max-content;
   width: 80%;
-  border: 3px rgb(0, 0, 0) solid;
+  border: 2px rgb(0, 0, 0) solid;
   border-radius: 50%;
 }
 
 
 .startCell {
-  background-color: rgba(140, 255, 157, 0.549);
+  z-index: 20;
+  background-color: #ccfded;
 }
 
 .gateNumberCell {
@@ -70,16 +71,18 @@
 .vert--line {
   content:"";
   z-index: -1;
-  border-left: 4px solid #358864;
+  
+  border-left: 3px solid #358864;
   border-radius: 1px;
   height: 102%;
   transform: translate(50%);
 }
 
+
 .hori--line {
   content:"";
   z-index: -1;
-  border-top: 4px solid #358864;
+  border-top: 3px solid #358864;
   border-radius: 1px;
   width: 102%;
 
@@ -96,15 +99,18 @@
 .hori--line--hitbox {
   z-index: 10;
   text-align: center;
+  border-radius: 50%;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
+  
 }
 
 .vert--line--hitbox {
   z-index: 10;
   text-align: center;
+  border-radius: 50%;
   cursor: pointer;
   display: flex;
   justify-content: center;

@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  webapp:
+    build: ./suraromu
+    container_name: suraromu_webapp_c
+    volumes:
+      - ./suraromu:/app
+    ports:
+      - '3000:3000'
+    stdin_open: true
+    tty: true
+  solver:
+    build: ./solver
+    container_name: solver_python_c
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./solver:/app
+
+
+#    depends_on:
+#      - rabbit
+
+#
+#  rabbit:
+#    image: "rabbitmq:3-management"
+#    ports:
+#      - "15672:15672"
+#      - "5672:5672"

@@ -5,7 +5,25 @@ export default function Cell(props) {
 
     const outerDivRef = useRef(null);
     let content = "";
-    
+
+
+
+    const handleMouseDown = event => {
+        props.setquickDraw({ isMouseDown: true, prevCell: props.index });
+        //console.log(`Mouse down at cell: ${props.index}`);
+    };
+
+    const handleMouseUp = (e) => {
+        props.setquickDraw({ isMouseDown: false });
+    };
+
+    const handleMouseEnter = (e) => {
+        if (props.quickDraw.isMouseDown) {
+            //console.log(`Moved from cell ${props.quickDraw.prevCell} to ${props.index}`);
+            props.setquickDraw({ prevCell: props.index });
+        }
+    };
+
     
     // TODO: maybe make this fixed by calculating it in the Grid.js
     useEffect(() => {
@@ -83,7 +101,11 @@ export default function Cell(props) {
 
 
     return(
-        <div ref={outerDivRef} key={props.index} className={classNames[getCellType(idx2D)]}>
+        <div ref={outerDivRef} key={props.index} className={classNames[getCellType(idx2D)]} 
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
+            onMouseEnter={handleMouseEnter}
+        >
             <p className={"cellText" + (getCellType(idx2D) === 5 ? "start" : "")}>{content}</p>
         </div>  
         

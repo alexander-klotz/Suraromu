@@ -9,6 +9,11 @@ function Grid(props) {
   const gridContainerRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [containerHeight, setContainerHeight] = useState(0);
+  const [quickDraw, setquickDraw] = useState({
+    isMouseDown: false,
+    prevCell: null,
+  });
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -76,34 +81,8 @@ function Grid(props) {
       
     }
 
-    props.setHistory((prevHistory) => [...prevHistory, structuredClone(props.puzzle)]);
   };
 
-  const rows = props.puzzle.rows
-  const columns = props.puzzle.cols
-  const cellSize = Math.min(100/columns, 100/rows) 
-
-  const cellWidth = containerWidth / columns;
-  const cellHeight = containerHeight / rows;
-  
-  const gridStyleBoard = {
-    display: 'grid',
-    gridTemplateColumns: `repeat(${columns}, ${cellSize}%)`,
-    gridTemplateRows: `repeat(${rows}, ${cellSize}%)`,
-    gap: '0px',
-    margin: "auto",
-    padding: '0rem',
-    width: "80%",
-    maxWidth: "60rem",
-    aspectRatio: "1/1",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: "auto",
-    position: "absolute",
-    justifyContent: "center",
-    
-  };
 
 
   const vertiGateIdxs = useMemo(() => computeGateIdxs(props.puzzle.gates, "v"), [props.puzzle.gates]);
@@ -206,8 +185,33 @@ function Grid(props) {
     return cells
   }
 
+  const rows = props.puzzle.rows
+  const columns = props.puzzle.cols
+  const cellSize = Math.min(100/columns, 100/rows)*((100 - props.size)/100)
+
+  const cellWidth = containerWidth / columns;
+  const cellHeight = containerHeight / rows;
+  
+  const gridStyleBoard = {
+    display: 'grid',
+    gridTemplateColumns: `repeat(${columns}, ${cellSize}%)`,
+    gridTemplateRows: `repeat(${rows}, ${cellSize}%)`,
+    gap: '0px',
+    margin: "auto",
+    padding: '0rem',
+    aspectRatio: "1/1",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: "auto",
+    position: "absolute",
+    justifyContent: "center", 
+  };
+
+
+
   const cells = Array.from({ length: rows*columns }).map((_, index) => {
-    return (<Cell index={index} puzzle={props.puzzle} vertiGateIdxs={vertiGateIdxs} horiGateIdxs={horiGateIdxs} gateGrid={gateGrid} />)
+    return (<Cell index={index} puzzle={props.puzzle} vertiGateIdxs={vertiGateIdxs} horiGateIdxs={horiGateIdxs} gateGrid={gateGrid} quickDraw={quickDraw} setquickDraw={setquickDraw} />)
   }
     
   );
@@ -217,20 +221,18 @@ function Grid(props) {
   const gridStyleHoriLines = {
     display: 'grid',
     gridTemplateColumns: `repeat(${columns-1}, ${cellSize}%)`,
-    gridTemplateRows: `repeat(${rows}, ${cellSize*0.50}%)`,
-    margin: "auto",
+    gridTemplateRows: `repeat(${rows}, ${cellSize*0.25}%)`,
     padding: '0rem',
-    width: "80%",
-    rowGap: `${cellSize*0.5}%`,
-    maxWidth: "60rem",
+    margin: "auto",
+    rowGap: `${cellSize*0.75}%`,
     aspectRatio: "1/1",
     left: 0,
     right: 0,
-    top: `${Math.min(cellHeight, cellWidth)*0.25}px`,
+    top: `${cellSize*(0.5-0.125)}%`,
     bottom: "auto",
     position: "absolute",
     justifyContent: "center",
-    
+
   };
 
   const horiLines = Array.from({ length: rows*(columns-1)}).map((_, index) => {
@@ -253,17 +255,15 @@ function Grid(props) {
   
   const gridStyleVertLines = {
     display: 'grid',
-    gridTemplateColumns: `repeat(${columns}, ${cellSize*0.5}%)`,
+    gridTemplateColumns: `repeat(${columns}, ${cellSize*0.25}%)`,
     gridTemplateRows: `repeat(${rows-1}, ${cellSize}%)`,
-    margin: "auto",
     padding: '0rem',
-    columnGap: `${cellSize*0.5}%`,
-    width: "80%",
-    maxWidth: "60rem",
+    margin: "auto",
+    columnGap: `${cellSize*0.75}%`,
     aspectRatio: "1/1",
     left: 0,
     right: 0,
-    top: `${Math.min(cellHeight, cellWidth)*0.5}px`,
+    top: `${cellSize*0.5}%`,
     bottom: "auto",
     position: "absolute",
     justifyContent: "center",
@@ -296,7 +296,7 @@ function Grid(props) {
   }
 
   return (
-    <div className='Grid' style={gridStyle}>
+    <div className='Grid' style={gridStyle}>      
       {backgroundBoard}
       {vertLinesGrid}
       {horiLinesGrid}

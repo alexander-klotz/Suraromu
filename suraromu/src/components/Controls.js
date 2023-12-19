@@ -1,9 +1,9 @@
 import Button from '@mui/material/Button';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import DoneOutlineOutlinedIcon from '@mui/icons-material/DoneOutlineOutlined';
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import NewGameDialoge from './NewGameDialoge';
 import UndoIcon from '@mui/icons-material/Undo';
+import SolveDialoge from './SolveDialoge'
 
 export default function Controls(props) {
 
@@ -20,6 +20,8 @@ export default function Controls(props) {
         if (props.history.length > 1) {
           const previousState = props.history[props.history.length - 2];
           const newHistory = props.history.slice(0, props.history.length - 1);
+          
+          props.setShouldTrack(false);
           props.setPuzzle(previousState);
           props.setHistory(newHistory);
         }
@@ -35,9 +37,7 @@ export default function Controls(props) {
                 Check
             </Button>
 
-            <Button style={buttonStyle} startIcon={<SmartToyOutlinedIcon style={iconStyle}/>}>
-                Solve
-            </Button>
+            <SolveDialoge {...props}/>
             
             <Button onClick={props.deleteFunction} style={buttonStyle} startIcon={<DeleteOutlinedIcon style={iconStyle}/>}>
                 Delete

@@ -1,6 +1,6 @@
 import './App.css';
 import Board from './components/Board';
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import GameInfo from './components/GameInfo';
 import Controls from './components/Controls';
 import Toolbar from './components/Toolbar';
@@ -28,9 +28,19 @@ function App() {
     } 
   });
 
+  useEffect(() => {
+    if(shouldTrack){
+      console.log("puzzle:", puzzle);
+      setHistory((prevHistory) => [...prevHistory, structuredClone(puzzle)]);
+    }else{
+      setShouldTrack(true)
+    }
+
+  }, [puzzle]);
   
 
   const [history, setHistory] = useState([structuredClone(puzzle)]);
+  const [shouldTrack, setShouldTrack] = useState(true);
   
   function blockLine(row, col, arr){
     if (row >= 0 && row < arr.length && col >= 0 && col < arr[row].length) {
@@ -109,8 +119,6 @@ function App() {
       arrayVert: newArrayVert
       }
     );
-
-    setHistory((prevHistory) => [...prevHistory, structuredClone(puzzle)]);
   
   }
 
@@ -136,25 +144,23 @@ function App() {
       arrayHori: arrayHoriNew,
       arrayVert: arrayVertNew,
     })});
-
-    setHistory((prevHistory) => [...prevHistory, structuredClone(puzzle)]);
   }
 
   return (
     <>
       <div className="App">
         <header className="App-header">
-          <h1>
+          <h1 style={{ marginBottom: '0' }}>
             スラローム
           </h1>
-          <p>
+          <p style={{ marginTop: '0', fontSize: "1.3rem"}}>
             Suraromu
           </p>
         </header>
 
         
         
-        <Controls deleteFunction={deleteConnections} setNewPuzzle={setNewPuzzle} setPuzzle={setPuzzle} setHistory={setHistory} history={history}/>
+        <Controls deleteFunction={deleteConnections} setNewPuzzle={setNewPuzzle} setPuzzle={setPuzzle} setHistory={setHistory} history={history} puzzle={puzzle} setShouldTrack={setShouldTrack}/>
         <Toolbar toolType={toolType} setToolType={setToolType}/>
         <Board puzzle={puzzle} setPuzzle={setPuzzle} setHistory={setHistory} history={history} toolType={toolType}/>
         
