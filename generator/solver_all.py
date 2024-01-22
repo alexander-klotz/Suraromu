@@ -1,5 +1,6 @@
 from z3 import *
 import re
+import os
 
 class SuraromuSolver:
     """
@@ -41,127 +42,6 @@ class SuraromuSolver:
                         print("| ", end=' ')
                     else:
                         print("  ", end=' ')
-    
-    def print_grid_color(self, h, v, wrongParts):
-
-        convertedWrongParts = [[self.getEdgeIdxAndDirection(edge) for edge in wrongPart] for wrongPart in wrongParts]
-
-        colors = [
-            '\033[30m',  # Black
-            '\033[31m',  # Red
-            '\033[32m',  # Green
-            '\033[33m',  # Yellow
-            '\033[34m',  # Blue
-        ]
-
-        def find_element_in_2d_list(lst, element):
-            for i, sublist in enumerate(lst):
-                if element in sublist:
-                    return i
-            return -1
-
-        # Reset color to default
-        reset_color = '\033[0m'
-
-        for i in range(2*self.rows - 1):
-
-            if(i % 2 == 0):
-                # horizontal lines
-                print("\n", end=" ")
-                for idx, h_line in enumerate(h[int(i/2)]):
-                    colorIndex = find_element_in_2d_list(convertedWrongParts, ((int(i/2), idx), True))
-                    if colorIndex == -1:
-                        if(str(h_line) == "True"):
-                            print("─~", end=' ')
-                        else:
-                            print("  ", end=' ')
-                    else:
-                        if(str(h_line) == "True"):
-                            print(colors[colorIndex%5] + "──" + reset_color, end=' ')
-                        else:
-                            print("  ", end=' ')
-            else:
-                # vertical lines
-                print(" ")
-                for idx, v_line in enumerate(v[int(i/2)]):
-                    colorIndex = find_element_in_2d_list(convertedWrongParts, ((int(i/2), idx), False))
-                    if colorIndex == -1:
-                        if(str(v_line) == "True"):
-                            print("|.", end=' ')
-                        else:
-                            print("  ", end=' ')
-                    else:
-                        if(str(v_line) == "True"):
-                            print(colors[colorIndex%5] + "| " + reset_color, end=' ')
-                        else:
-                            print("  ", end=' ')
-
-    def getWrongParts(self, main_loop_visited_cells, gate_cell_list):
-            wrongParts = []
-
-            main_loop_visited_cells = list(dict.fromkeys(main_loop_visited_cells))
-            if main_loop_visited_cells[0] != self.startIndex:
-                main_loop_visited_cells = [self.startIndex] + main_loop_visited_cells
-            if main_loop_visited_cells[-1] != self.startIndex:
-                main_loop_visited_cells.append(self.startIndex)
-            
-            start = 0
-            currentGateCount = 0
-            lastGateVisited = None
-            totalVisitedGates = 0
-
-            # Iterate over the main path first cell is always the start cell and therefore we can skip that
-            for i in range(len(main_loop_visited_cells)):
-                if i == 0: continue
-
-                if totalVisitedGates == len(self.gateCellsHorizontal) + len(self.gateCellsVertical):
-                    # here we just check if the part from the last known gate till the start is correct once we have all the other gates
-                    if totalVisitedGates - currentGateCount != lastGateVisited and currentGateCount + 1 != lastGateVisited:
-                        wrongParts.append(main_loop_visited_cells[start:])
-                        break
-
-                if main_loop_visited_cells[i] in gate_cell_list:
-                    # we are at a gateCell, get the key
-                    currentGateNumber = 0
-                    totalVisitedGates += 1
-                    for key, value in {**self.gateCellsHorizontal, **self.gateCellsVertical}.items():
-                        if main_loop_visited_cells[i] in value:
-                            currentGateNumber = key
-
-                    if currentGateNumber < 0:
-                        # unordered gate
-                        currentGateCount += 1
-                    
-                    if currentGateNumber > 0:
-                        # we reached an ordered gate now we have to check if this subpart was correct
-                        currentGateCount += 1
-                        if start == 0:
-                            # special case if we still are at the start
-                            if currentGateCount == currentGateNumber or len(self.gateCellsHorizontal) + len(self.gateCellsVertical) - currentGateCount + 1 == currentGateNumber:
-                                # the ordering of this part is correct so we look at the rest starting from this cell
-                                start = i
-                                currentGateCount = 0
-                            else:
-                                # ordering is incorrect add it to the incorrect parts and increase start and set currentGateCount to 0
-                                wrongParts.append(main_loop_visited_cells[start:i+1])
-                                start = i
-                                currentGateCount = 0
-
-                        else:
-                            # normal case where we are somewhere in the middle
-                            if abs(currentGateNumber - lastGateVisited) == currentGateCount:
-                                # the ordering of this part is correct so we look at the rest starting from this cell
-                                start = i
-                                currentGateCount = 0
-                            else:
-                                # ordering is incorrect add it to the incorrect parts and increase start and set currentGateCount to the gate we are just at
-                                wrongParts.append(main_loop_visited_cells[start:i+1])
-                                start = i
-                                currentGateCount = 0
-                        lastGateVisited = currentGateNumber
-
-
-            return wrongParts
 
 
     def getConnectionsOfCell(self, r, c):
@@ -247,25 +127,11 @@ class SuraromuSolver:
             # add the single loop to the incorrect loops
             incorrect_loops.append(incorrect_loop)
 
-        wrongPartsEdges = []
-        # try to extract some parts we can exclude
-        extractedGates = [cell for cell in main_loop_visited_cells if cell in gate_cell_list]
-    
-        if (len(extractedGates) == len(self.gateCellsHorizontal) +  len(self.gateCellsVertical)):
-            # the main loop that we found traverses all gates so we can try to find some incorrect parts
-            wrongPartsCells = self.getWrongParts(main_loop_visited_cells, gate_cell_list)
-            for wrongPartCells in wrongPartsCells:
-                wrongPartEdges = []
-                for i in range(len(wrongPartCells) - 1):
-                    wrongPartEdges.append(self.getCommonConnection(wrongPartCells[i], wrongPartCells[i+1]))
-                wrongPartsEdges.append(wrongPartEdges)
-            
-
         if(not gate_check):
             incorrect_loops.append(maybe_correct_loop)
             maybe_correct_loop = []
 
-        return maybe_correct_loop, incorrect_loops, wrongPartsEdges
+        return maybe_correct_loop, incorrect_loops
 
 
     """
@@ -273,8 +139,10 @@ class SuraromuSolver:
     def check_gate_ordering(self, cells, gate_cell_list):
 
         extractedGates = [cell for cell in cells if cell in gate_cell_list]
+        #print(extractedGates)
 
         if(len(extractedGates) != len(self.gateCellsHorizontal) +  len(self.gateCellsVertical)):
+            print("not all gates are visited in this loop")
             return False
 
         for idx, gate_cell in enumerate(extractedGates):
@@ -285,9 +153,13 @@ class SuraromuSolver:
             if(self.gateCellsHorizontal.get(idx) != None):
                 expected_gate_cells = self.gateCellsHorizontal.get(idx)
             if(expected_gate_cells == None):
+                #print("nothing to check for index: ", idx)
                 continue
             if(gate_cell not in expected_gate_cells):
+                print(idx, gate_cell, expected_gate_cells)
+                print("ordering not correct!!")
                 return False
+        print("!!!correct ordering")
         return True
 
 
@@ -311,10 +183,6 @@ class SuraromuSolver:
         return loopElements
 
 
-    def getCommonConnection(self, cell1, cell2):
-        commonElements = set(self.getConnectionsOfCell(*cell1)) & set(self.getConnectionsOfCell(*cell2))
-        return list(commonElements)[0]
-
     def getLoopCells(self, start_idx, usedEdges):
         loopCells = []
 
@@ -329,12 +197,14 @@ class SuraromuSolver:
 
 
         while(1):
+            #print("cells ", loopCells, "   connectedCells ", getConnectedCells(new_edge), "   edge ", new_edge)
             connectedCell1, connectedCell2 = self.getConnectedCells(new_edge)
             if(connectedCell1 in loopCells):
                 new_cell = connectedCell2
             elif(connectedCell2 in loopCells):
                 new_cell = connectedCell1
             else:
+                #print("error: ", connectedCell1, connectedCell2, loopCells, new_edge)
                 break
 
             loopCells.append(new_cell)
@@ -344,16 +214,14 @@ class SuraromuSolver:
 
             # check if we found a new edge
             if( len(maybe_new_edge) == 0 ):
+                #print("no new edges found result is: ", loopCells)
                 break
 
             new_edge = maybe_new_edge.pop()
             usedEdges.remove(new_edge)
 
-        loopCells = list(dict.fromkeys(loopCells))
-        if loopCells[0] != self.startIndex:
-            loopCells = [self.startIndex] + loopCells
-        if loopCells[-1] != self.startIndex:
-            loopCells.append(self.startIndex)
+
+
         return loopCells
 
 
@@ -470,9 +338,9 @@ class SuraromuSolver:
         s = Solver()
         s.add(start_cond + line_cond_h + line_cond_v + blocked_cond + gate_cond)
 
+        loopCount = 2
         incorrect_loops = [1]
-
-        print("setup is done")
+        solutions = []
 
         while s.check() == sat:
             m = s.model()
@@ -489,24 +357,80 @@ class SuraromuSolver:
             v_used = [ [ self.V[i][j] for j in range(self.columns) if m.evaluate(self.V[i][j]) ]
                 for i in range(self.rows-1) ]
 
-            correct_loop, incorrect_loops, wrongParts = self.getLoops(h_used, v_used, gate_cell_list)
+            correct_loop, incorrect_loops = self.getLoops(h_used, v_used, gate_cell_list)
+            #self.print_grid(h_used, v_used)
+            print(h_used, v_used)
+            # remove the loops that do not start in the beginning
+            #print("removed loops: ", incorrect_loops)
             blocked_loops_cond = []
             for incorrect_loop in incorrect_loops:
                 blocked_loops_cond = blocked_loops_cond + [Or([Not(edge) for edge in incorrect_loop])]
+                #print("inc loops:", incorrect_loop)
             s.add(blocked_loops_cond)
 
-            if correct_loop != []:
-                return (self.convert_boolrefs_to_booleans(h), self.convert_boolrefs_to_booleans(v))
-            
-            #self.print_grid(h, v)
-            for wrongPart in wrongParts:
-                partBlocking = Not(And(wrongPart))
-                s.add(partBlocking)
+
+            if len(incorrect_loops) == 0 and correct_loop != []:
+                
+                print("!!!!!!!!!!solution found!!!!!!!!!", correct_loop)
+                solutions.append(correct_loop)
+                #os.system('clear')
+                self.print_grid(h, v)
+                
+                # remove this solution
+                blocking_clause = Not(And([var if bool(m[var]) else Not(var) for row in self.H for var in row] +
+                                        [var if bool(m[var]) else Not(var) for row in self.V for var in row]))
+                s.add(blocking_clause)
 
             if len(incorrect_loops) == 0 and correct_loop == []:
                 break
 
-        return []
-    
-    def convert_boolrefs_to_booleans(self, boolref_list):
-        return [[str(boolref) == "True" for boolref in inner_list] for inner_list in boolref_list]
+            #print_grid(h, v)
+            #print("\n----------------------------------------\n")
+        
+        return solutions
+
+
+
+'''
+# vertical means the line has to pass vertically (therefore the gate is a horizontal dotted line)
+gcv =  {-68: [(3, 17)], -67: [(4, 17)], -27: [(16, 2)], -60: [(11, 17)], -49: [(19, 11)], -20: [(9, 2)], -9: [(3, 5)], -41: [(13, 11)], -55: [(19, 17)], -22: [(11, 2)], -34: [(12, 5)], -13: [(6, 8)]}
+# since two gates share the same connection it might lead to an issue
+gch = {-36: [(11, 7)], -65: [(5, 19)], -16: [(8, 6)], -18: [(8, 4)], -63: [(8, 18)], -5: [(2, 9)], -19: [(8, 3)], -69: [(2, 16)]}
+# TODO: beforehand we MUST check if the highest gate value is not bigger than the smallest gate in total
+
+blocked = [(1, 9), (1, 16), (3, 4), (3, 6), (3, 9), (3, 16), (3, 18), (4, 16), (4, 18), (4, 19), (6, 7), (6, 9), (6, 19), (7, 3), (7, 4), (7, 6), (7, 18), (9, 1), (9, 3), (9, 4), (9, 6), (9, 18), (10, 7), (11, 1), (11, 3), (11, 16), (11, 18), (12, 4), (12, 6), (12, 7), (13, 10), (13, 12), (16, 1), (16, 3), (19, 10), (19, 12), (19, 16), (19, 18)]
+
+
+test = SuraromuSolver(21, 21, (5, 14), gcv, gch, blocked)
+'''
+
+#162 took very hard for humans
+blocked = [(0, 11), (0, 15), (1, 1), (1, 4), (1, 8), (1, 13), (1, 17), (1, 20), (1, 23), (2, 6), (3, 1), (3, 3), (3, 5), (3, 6), (3, 10), (3, 12), (3, 14), (3, 17), (3, 20), (3, 22), (4, 8), (5, 3), (5, 7), (5, 8), (5, 13), (5, 23), (5, 24), (6, 1), (6, 5), (6, 9), (6, 16), (6, 18), (6, 20), (7, 7), (7, 9), (7, 12), (7, 16), (7, 22), (7, 23), (8, 1), (8, 2), (8, 5), (8, 18), (8, 20), (9, 5), (9, 6), (9, 8), (9, 12), (9, 14), (9, 18), (10, 3), (10, 10), (10, 12), (10, 16), (10, 18), (10, 19), (10, 23), (11, 1), (11, 5), (11, 7), (11, 8), (11, 10), (11, 14), (12, 1), (12, 8), (12, 12), (12, 16), (12, 18), (12, 22), (13, 3), (13, 4), (13, 6), (13, 10), (13, 14), (14, 4), (14, 8), (14, 12), (14, 16), (14, 19), (15, 0), (15, 2), (15, 6), (16, 4), (16, 9), (16, 10), (16, 12), (16, 16), (16, 20), (16, 22), (16, 23), (17, 0), (17, 2), (17, 6), (17, 14), (17, 16), (17, 20), (18, 4), (18, 8), (18, 12), (18, 14), (18, 18), (18, 22), (19, 6), (19, 10)]
+
+gcv = {5: [(1, 2), (1, 3)], 7: [(3, 0)], 46: [(8, 19)], 24: [(9, 9), (9, 10), (9, 11)], 36: [(10, 24)], 11: [(11, 2), (11, 3), (11, 4)], 34: [(16, 24)], 16: [(17, 3), (17, 4), (17, 5)], -1: [(1, 5), (1, 6), (1, 7)], -2: [(1, 9), (1, 10), (1, 11), (1, 12)], -3: [(1, 14), (1, 15), (1, 16)], -4: [(1, 18), (1, 19)], -5: [(3, 7), (3, 8), (3, 9)], -6: [(3, 18), (3, 19)], -7: [(5, 0), (5, 1), (5, 2)], -8: [(5, 9), (5, 10), (5, 11), (5, 12)], -9: [(6, 17)], -10: [(7, 10), (7, 11)], -11: [(8, 21), (8, 22), (8, 23), (8, 24)], -12: [(9, 7)], -13: [(9, 15), (9, 16), (9, 17)], -14: [(10, 13), (10, 14), (10, 15)], -15: [(12, 9), (12, 10), (12, 11)], -16: [(12, 13), (12, 14), (12, 15)], -17: [(12, 19), (12, 20), (12, 21)], -18: [(13, 0), (13, 1), (13, 2)], -19: [(13, 5)], -20: [(14, 9), (14, 10), (14, 11)], -21: [(14, 13), (14, 14), (14, 15)], -22: [(14, 17), (14, 18)], -23: [(16, 0), (16, 1), (16, 2), (16, 3)], -24: [(16, 11)], -25: [(16, 13), (16, 14), (16, 15)], -26: [(17, 17), (17, 18), (17, 19)], -27: [(18, 0), (18, 1), (18, 2), (18, 3)], -28: [(18, 5), (18, 6), (18, 7)], -29: [(18, 9), (18, 10), (18, 11)], -30: [(18, 15), (18, 16), (18, 17)], -31: [(18, 19), (18, 20), (18, 21)]}
+gch = {43: [(2, 20)], 39: [(2, 23), (3, 23), (4, 23)], 21: [(4, 5), (5, 5)], -32: [(4, 3)], -33: [(6, 3), (7, 3), (8, 3), (9, 3)], -34: [(15, 8), (16, 8), (17, 8)], -35: [(4, 20), (5, 20)], -36: [(0, 22), (1, 22), (2, 22)], -37: [(17, 23), (18, 23), (19, 23)]}
+
+print(SuraromuSolver(20, 25, (7, 14), gcv, gch, blocked).solvePuzzle())
+
+
+
+
+
+'''
+# vertical means the line has to pass vertically (therefore the gate is a horizontal dotted line)
+gcv =  {1: [(1, 3)], -67: [(1, 9)], -27: [(6, 0)], -60: [(8, 2)], -49: [(8, 4)], -20: [(8, 6)]}
+# since two gates share the same connection it might lead to an issue
+gch = {-36:  [(2, 8)], -65: [(4, 8)], -16: [(5, 1)], -18: [(9, 3)]}
+# TODO: beforehand we MUST check if the highest gate value is not bigger than the smallest gate in total
+
+blocked = [(1, 1), (1, 2), (1, 4), (1, 6), (1, 8), (2, 1), (2, 2), (3, 4), (3, 6), (3, 8), (4, 1), (4, 3), (5, 6), (5, 8), (6, 1), (6, 3), (6, 5), (7, 7), (7, 8), (8, 1), (8, 3), (8, 5), (8, 7), (8, 8)]
+
+
+test = SuraromuSolver(10, 10, (0, 0), gcv, gch, blocked)
+
+solutions = test.solvePuzzle()
+
+print(solutions)
+
+print(len(solutions))
+'''

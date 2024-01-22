@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Button,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
+  Alert,
+  AlertTitle,
+  LinearProgress,
+  Box,
+  Snackbar,
 } from '@mui/material';
 
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
@@ -19,8 +24,26 @@ const SolveDialoge = (props) => {
   const iconStyle = {
     fontSize: "30px",
   };
+
+  const ws = useRef(null);
+
+  useEffect(() => {
+      ws.current = new WebSocket('ws://localhost:5000/ws');
+      ws.current.onopen = () => console.log("ws opened");
+      ws.current.onclose = () => console.log("ws closed");
+
+      const wsCurrent = ws.current;
+
+      return () => {
+          wsCurrent.close();
+      };
+  }, []);
   
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [openError, setOpenError] = useState(false);
+  const [openSuccess, setOpenSuccess] = useState(false);
+  const [abort, setAbort] = useState(false);
 
   const handleOpen = () => {
     setOpen(true);
@@ -28,6 +51,23 @@ const SolveDialoge = (props) => {
 
   const handleClose = () => {
     setOpen(false);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (abort) {
+      setAbort(false);
+    }
+  }, [abort]);
+
+  const handleAbort = () => {
+    if (!ws.current) return;
+    if (ws.current.readyState === WebSocket.OPEN) {
+      console.log('abort')
+      ws.current.send('abort');
+    }
+    setAbort(true);
+    setIsLoading(false);
   };
 
 
@@ -65,45 +105,54 @@ const SolveDialoge = (props) => {
 
 
   const handleSolver = () => {
-    
-    // MAYBe instead use some 
-    // TODO: we either get the newArrayHor and Vert from the presaved solution (if useSolver is unchecked or we instead )
 
+    setIsLoading(true)
     let solverParams = getSolverPuzzle(props.puzzle)
-    console.log(solverParams)  
     let solution = []
-    // Frontend websocket
-    const socket = new WebSocket('ws://localhost:5000/ws');
 
-    socket.addEventListener('open', function (event) {
-      socket.send(JSON.stringify(solverParams));
-    });
+    ws.current.send(JSON.stringify(solverParams));
     
-    socket.addEventListener('message', function (event) {
-        if(event.data[0] === "["){
-          solution = JSON.parse(event.data)
-          socket.close();
-          
-          let newArrayHori = updateArray(solution[0], [...props.puzzle.arrayHori]);
-          let arrayVert = updateArray(solution[1], [...props.puzzle.arrayVert]);
+    ws.current.addEventListener('message', function (event) {
       
-          props.setPuzzle({
-            ...props.puzzle,
-            arrayHori: newArrayHori,
-            arrayVert: arrayVert,
-          })
-          
+      if (event.data === "[]"){
+        console.log('Solver did not find a solution: ', event.data);
+        setIsLoading(false)
+        // display error message to the user
+        setOpenError(true)
+        setTimeout(() => {
           handleClose()
+        }, 4000);
+
         
-        }
-        console.log('Message from server: ', event.data);
-    });
+      }
+
+      else if(event.data[0] === "["){
+
+        solution = JSON.parse(event.data)
+        setIsLoading(false)
+
+        // display success message to the user
+        setOpenSuccess(true)
+        setTimeout(() => {
+          handleClose()
+        }, 2000);
+
+        
+        
+        let newArrayHori = updateArray(solution[0], [...props.puzzle.arrayHori]);
+        let arrayVert = updateArray(solution[1], [...props.puzzle.arrayVert]);
     
-    // To stop the calculation
-    socket.addEventListener('open', function (event) {
-        socket.send('stop');
+        props.setPuzzle({
+          ...props.puzzle,
+          arrayHori: newArrayHori,
+          arrayVert: arrayVert,
+        })
+        
+      
+      }
+      console.log('Message from server: ', event.data);
     });
-    
+     
     
   };
   
@@ -130,6 +179,24 @@ const SolveDialoge = (props) => {
           <Button onClick={handleSolver} color="primary" variant="contained">
             Use SAT-Solver
           </Button>
+          <br/>
+          <Box sx={{ width: '100%' }}>
+            {isLoading && <LinearProgress />}
+            {isLoading && <Button onClick={handleAbort} color="secondary" variant="contained">Abort</Button>}
+          </Box>
+
+          <Snackbar open={openError} autoHideDuration={4000} onClose={() => setOpenError(false)}>
+            <Alert severity="error">
+              <AlertTitle>Failure to solve</AlertTitle>
+              Solver unable to find solution to the currently selected puzzle
+            </Alert>
+          </Snackbar>
+          <Snackbar open={openSuccess} autoHideDuration={2000} onClose={() => setOpenSuccess(false)}>
+            <Alert severity="success">
+              Found solution
+            </Alert>
+          </Snackbar>
+
 
           
         </DialogContent>

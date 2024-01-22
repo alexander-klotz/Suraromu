@@ -4,6 +4,8 @@ from time import sleep
 from fastapi.middleware.cors import CORSMiddleware
 from solver import SuraromuSolver
 import json
+import multiprocessing
+import asyncio
 
 app = FastAPI()
 
@@ -23,24 +25,49 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def solve(solver, solutions):
+    returnValue = solver.solvePuzzle()
+    solutions.value = returnValue
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
+
+    manager = multiprocessing.Manager()
+    solutions = manager.Value(object, None)
+
+    p = None
+    terminated = False
     while True:
-        data = await websocket.receive_text()
+        try:
+            data = await asyncio.wait_for(websocket.receive_text(), timeout=1.0)
+            
+            if data != "abort":
+                await websocket.send_text("Calculation started")
+                solutions.value = None
+                data = json.loads(data)
+                data = convertToTuple(data)
+                solver = SuraromuSolver(data["rows"], data["cols"], data["startIndex"], data["gcv"], data["gch"], data["blockedCells"])
+                
+                p = multiprocessing.Process(target=solve, args=(solver, solutions))
+                p.start()
+                
+            elif data == "abort":
+                if p is not None and p.is_alive():
+                    p.terminate()  # Terminate the process
+                    print("terminated process")
+                await websocket.send_text("Calculation stopped")
+
+
+
+        except asyncio.TimeoutError:
+            if p != None and not p.is_alive() and solutions.value != None:
+                p = None
+                await websocket.send_text(json.dumps(solutions.value))
+            continue  # No message received, continue to the next iteration
+
         
-        if data != "stop":
-            await websocket.send_text("Calculation started")
-            data = json.loads(data)
-            data = convertToTuple(data)
-            # TODO: maybe use multiprocessing to achieve the option to stop the calculation
-            solver = SuraromuSolver(data["rows"], data["cols"], data["startIndex"], data["gcv"], data["gch"], data["blockedCells"])
-            solution = solver.solvePuzzle()
-            print(solution)
-            await websocket.send_text(json.dumps(solution))
-        elif data == "stop":
-            await websocket.send_text("Calculation stopped")
-            await websocket.close()
+            
 
 
 def convertToTuple(data):

@@ -1,7 +1,8 @@
 from z3 import *
 import re
+import os
 
-class SuraromuSolver:
+class SuraromuSolverPrimWithPartConstraints:
     """
     @params:
     rows: integer representing the number of rows of the puzzle grid
@@ -349,6 +350,7 @@ class SuraromuSolver:
             new_edge = maybe_new_edge.pop()
             usedEdges.remove(new_edge)
 
+
         loopCells = list(dict.fromkeys(loopCells))
         if loopCells[0] != self.startIndex:
             loopCells = [self.startIndex] + loopCells
@@ -471,8 +473,7 @@ class SuraromuSolver:
         s.add(start_cond + line_cond_h + line_cond_v + blocked_cond + gate_cond)
 
         incorrect_loops = [1]
-
-        print("setup is done")
+        solutions = []
 
         while s.check() == sat:
             m = s.model()
@@ -494,19 +495,28 @@ class SuraromuSolver:
             for incorrect_loop in incorrect_loops:
                 blocked_loops_cond = blocked_loops_cond + [Or([Not(edge) for edge in incorrect_loop])]
             s.add(blocked_loops_cond)
-
-            if correct_loop != []:
-                return (self.convert_boolrefs_to_booleans(h), self.convert_boolrefs_to_booleans(v))
             
-            #self.print_grid(h, v)
             for wrongPart in wrongParts:
                 partBlocking = Not(And(wrongPart))
                 s.add(partBlocking)
 
+
+            if len(incorrect_loops) == 0 and correct_loop != []:
+                
+                solutions.append((self.convert_boolrefs_to_booleans(h), self.convert_boolrefs_to_booleans(v)))
+                if len(solutions) > 30:
+                    return solutions
+                #self.print_grid(h, v)
+                # remove this solution
+                blocking_clause = Not(And([var if bool(m[var]) else Not(var) for row in self.H for var in row] +
+                                        [var if bool(m[var]) else Not(var) for row in self.V for var in row]))
+                s.add(blocking_clause)
+
             if len(incorrect_loops) == 0 and correct_loop == []:
                 break
 
-        return []
+        return solutions
     
     def convert_boolrefs_to_booleans(self, boolref_list):
         return [[str(boolref) == "True" for boolref in inner_list] for inner_list in boolref_list]
+

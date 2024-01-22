@@ -4,26 +4,32 @@ services:
     build: ./suraromu
     container_name: suraromu_webapp_c
     volumes:
-      - ./suraromu:/app
+      - ./suraromu:/w_app
     ports:
       - '3000:3000'
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     stdin_open: true
     tty: true
+    networks:
+      - mynetwork
   solver:
     build: ./solver
     container_name: solver_python_c
     ports:
       - "5000:5000"
     volumes:
-      - ./solver:/app
-
-
-#    depends_on:
-#      - rabbit
-
-#
-#  rabbit:
-#    image: "rabbitmq:3-management"
-#    ports:
-#      - "15672:15672"
-#      - "5672:5672"
+      - ./solver:/s_app
+    networks:
+      - mynetwork
+  generator:
+    build: ./generator
+    container_name: generator_python_c
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./generator:/g_app
+    networks:
+      - mynetwork
+networks:
+  mynetwork:

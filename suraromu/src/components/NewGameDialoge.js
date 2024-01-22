@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Button,
   Dialog,
@@ -11,6 +11,8 @@ import {
   MenuItem,
   FormControlLabel,
   Checkbox,
+  LinearProgress,
+  Box,
 } from '@mui/material';
 
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
@@ -33,8 +35,27 @@ const NewGameDialoge = (props) => {
   const iconStyle = {
     fontSize: "30px",
   };
+
+
+  const ws = useRef(null);
+
+  useEffect(() => {
+      ws.current = new WebSocket('ws://localhost:4000/ws');
+      ws.current.onopen = () => console.log("ws opened");
+      ws.current.onclose = () => console.log("ws closed");
+
+      const wsCurrent = ws.current;
+
+      return () => {
+          wsCurrent.close();
+      };
+  }, []);
   
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [openError, setOpenError] = useState(false);
+  const [openSuccess, setOpenSuccess] = useState(false);
+  const [abort, setAbort] = useState(false);
   const [objectData, setObjectData] = useState({
     size: 'small',
     difficulty: 'easy',
@@ -48,6 +69,23 @@ const NewGameDialoge = (props) => {
 
   const handleClose = () => {
     setOpen(false);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (abort) {
+      setAbort(false);
+    }
+  }, [abort]);
+
+  const handleAbort = () => {
+    if (!ws.current) return;
+    if (ws.current.readyState === WebSocket.OPEN) {
+      console.log('abort')
+      ws.current.send('abort');
+    }
+    setAbort(true);
+    setIsLoading(false);
   };
 
   const handleValueChange = (property, value) => {
@@ -55,7 +93,18 @@ const NewGameDialoge = (props) => {
       ...prevState,
       [property]: value,
     }));
+
+    if (value === true){
+      setObjectData((prevState) => ({
+        ...prevState,
+        ['difficulty']: 'easy',
+      }));
+    }
+
   };
+
+
+
 
   const puzzles = getPuzzles(objectData.difficulty, objectData.size)
   const puzzleOptions = Array.from({ length: puzzles.length }, (_, index) => index);
@@ -71,13 +120,64 @@ const NewGameDialoge = (props) => {
       blockedCells: [],
       gates: {
       }}
-    if (objectData.puzzle !== ''){
+    
+    
+    if (objectData.puzzle !== '' && !objectData.generated){
       newPuzzle = puzzles[objectData.puzzle]
+      props.setNewPuzzle(newPuzzle)
+    }else if (objectData.generated){
+      handleGeneration(newPuzzle)
     }
     
-    props.setNewPuzzle(newPuzzle)
+    
+  };
 
-    handleClose()
+
+  const handleGeneration = (newPuzzle) => {
+    
+    // TODO: pass the new puzzle params to the backend
+
+
+    setIsLoading(true)
+
+    let genPuzzle = []
+
+
+    
+    ws.current.send(JSON.stringify(objectData));
+
+    
+    ws.current.addEventListener('message', function (event) {
+      
+      // TODO: for the error we need to change what we searched for
+      if (event.data === "[]"){
+        console.log('Solver did not find a solution: ', event.data);
+        setIsLoading(false)
+        // display error message to the user
+        setOpenError(true)
+        setTimeout(() => {
+          handleClose()
+        }, 4000);
+
+        
+      }
+
+      else if(event.data[0] === "{"){
+
+        genPuzzle = JSON.parse(event.data)
+        setIsLoading(false)
+        props.setNewPuzzle(genPuzzle)
+
+        // display success message to the user
+        setOpenSuccess(true)
+        setTimeout(() => {
+          handleClose()
+        }, 2000);
+      }
+      console.log('Message from server: ', event.data);
+    });
+    
+    
   };
 
   return (
@@ -112,8 +212,8 @@ const NewGameDialoge = (props) => {
               label="Difficulty"
             >
               <MenuItem value="easy">Easy</MenuItem>
-              <MenuItem value="medium">Medium</MenuItem>
-              <MenuItem value="hard">Hard</MenuItem>
+              <MenuItem disabled={objectData.generated} value="medium">Medium</MenuItem>
+              <MenuItem disabled={objectData.generated} value="hard">Hard</MenuItem>
             </Select>
           </FormControl>
           {!objectData.generated && 
@@ -144,6 +244,11 @@ const NewGameDialoge = (props) => {
             }
             label="Generated"
           />
+          <br/>
+          <Box sx={{ width: '100%' }}>
+            {isLoading && <LinearProgress />}
+            {isLoading && <Button onClick={handleAbort} color="secondary" variant="contained">Abort</Button>}
+          </Box>
 
           
         </DialogContent>
