@@ -5,8 +5,11 @@ export default function Cell(props) {
 
     const outerDivRef = useRef(null);
     let content = "";
-
-
+    // Type: normal=0 blocked=1 gateHori=2 gateVert=3 gateNumber=4 Start=5
+    const classNames = ["cell", "blockedCell", "gateHoriCell", "gateVertCell", "gateNumberCell", "startCell"]
+    const idx2D = [Math.floor(props.index/(props.puzzle.cols)), props.index%(props.puzzle.cols)]
+    getCellType(idx2D)
+    
 
     const handleMouseDown = event => {
         props.setquickDraw({ isMouseDown: true, prevCell: props.index });
@@ -29,9 +32,10 @@ export default function Cell(props) {
     useEffect(() => {
         const outerDiv = outerDivRef.current;
         const pElement = outerDiv.querySelector('p');
+        let count = content.split("/").length
         const updateFontSize = () => {
             const fontSize = outerDiv.offsetHeight;
-            pElement.style.fontSize = `${fontSize * 0.6}px`;
+            pElement.style.fontSize = `${fontSize * 0.6/count}px`;
         };
         updateFontSize();
 
@@ -42,12 +46,7 @@ export default function Cell(props) {
             resizeObserver.unobserve(outerDiv);
             resizeObserver.disconnect();
         };
-    }, []);
-    
-
-    // Type: normal=0 blocked=1 gateHori=2 gateVert=3 gateNumber=4 Start=5
-    const classNames = ["cell", "blockedCell", "gateHoriCell", "gateVertCell", "gateNumberCell", "startCell"]
-    const idx2D = [Math.floor(props.index/(props.puzzle.cols)), props.index%(props.puzzle.cols)]
+    }, [content]);
     
 
     function getCellType(idx) {

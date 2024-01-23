@@ -147,21 +147,28 @@ function Grid(props) {
         const possibleGateCells = getBlockedGateCells(props.puzzle.gates[key])
         for (let idx of possibleGateCells){
           if (idx[0] >= 0 && idx[0] < props.puzzle.rows && idx[1] >= 0 && idx[1] < props.puzzle.cols ){
+            let otherGateNumber = gateGrid[idx[0]][idx[1]]
+            let numberToAdd = ""
+            if(otherGateNumber !== '0' && otherGateNumber !== ''){
+              numberToAdd = otherGateNumber + "/"
+            }
             if(props.puzzle.gates[key]?.direction !== undefined){
-              if(props.puzzle.gates[key].direction === "w") gateGrid[idx[0]][idx[1]] = key.toString() + "←";
-              if(props.puzzle.gates[key].direction === "e") gateGrid[idx[0]][idx[1]] = key.toString() + "→";
-              if(props.puzzle.gates[key].direction === "s") gateGrid[idx[0]][idx[1]] = key.toString() + "↓";
-              if(props.puzzle.gates[key].direction === "n") gateGrid[idx[0]][idx[1]] = key.toString() + "↑";
+              if(props.puzzle.gates[key].direction === "w") gateGrid[idx[0]][idx[1]] = numberToAdd + key.toString() + "←";
+              if(props.puzzle.gates[key].direction === "e") gateGrid[idx[0]][idx[1]] = numberToAdd + key.toString() + "→";
+              if(props.puzzle.gates[key].direction === "s") gateGrid[idx[0]][idx[1]] = numberToAdd + key.toString() + "↓";
+              if(props.puzzle.gates[key].direction === "n") gateGrid[idx[0]][idx[1]] = numberToAdd + key.toString() + "↑";
               
               
             }else{
-              gateGrid[idx[0]][idx[1]] = key.toString();
+              gateGrid[idx[0]][idx[1]] = numberToAdd + key.toString();
             }
             
           }
         }
     }
   }
+
+  console.log(gateGrid)
 
   function getBlockedGateCells(gate) {
     const cells = []
