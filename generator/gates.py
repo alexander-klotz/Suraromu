@@ -26,9 +26,8 @@ class PuzzleGrid:
             4... ┗
             5... ┓
             6... ┏
-        x (gate number if needed):
-            x... gate number (maybe only for the end blocks or for all blocks)
         '''
+
         self.grid = np.empty((rows, cols), dtype=object)
         self.orderedCells = []
         self.startCell = None
@@ -43,10 +42,7 @@ class PuzzleGrid:
         
         for r in range(self.rows):
             for c in range(self.cols):
-                self.grid[r, c] = [0, 0, 0]
-
-
-        # TODO: once the output of edges.py get's fixed we can include this again
+                self.grid[r, c] = [0, 0]
         
         self.startCell = self.getCommonCell(orderedConnections[0], orderedConnections[-1])
         startCellLine = self.getCellLine(orderedConnections[0], orderedConnections[-1])
@@ -151,23 +147,18 @@ class PuzzleGrid:
             if isHorizontal is None:
                 continue
             else:
-                #print("possGate: ", lowerlimit, upperlimit, isHorizontal, idx)
-                
                 if isHorizontal:
                     # check if the gate has space for a blocked cell or is on the very edge of the puzzle (both isHorizontal and !isHorizontal)
                     if (lowerlimit < idx[1] or lowerlimit == 0) and (upperlimit > idx[1] or upperlimit == self.cols-1):
-                        #print("\t\t", lowerlimit, upperlimit, isHorizontal)
                         self.possibleGates.append((lowerlimit, upperlimit, idx, isHorizontal))
                 else:
                     if (lowerlimit < idx[0] or lowerlimit == 0) and (upperlimit > idx[0] or upperlimit == self.rows-1):
-                        #print("\t\t", lowerlimit, upperlimit, isHorizontal)
                         self.possibleGates.append((lowerlimit, upperlimit, idx, isHorizontal))
         return
     
     
     def chooseGates(self, maxLength, count, difficulty, placeAll):
 
-        # TODO: we still maybe need to include the difficulty here
         # try to place given amount (count) of gates using random sampling
         gatesToTry = []
         if len(self.possibleGates) < count:
@@ -176,7 +167,6 @@ class PuzzleGrid:
                 gatesToTry.append((idx, gate)) 
         else:
             # choose count random gates and note their index
-            # TODO: maybe we should try to space them as evenly as possible instead of complete random sampeling
             randomIndices = random.sample(range(len(self.possibleGates)), count)
 
             for index in randomIndices:
@@ -210,7 +200,6 @@ class PuzzleGrid:
             # we start off by placing all possible gates
             for idx, currGate in enumerate(self.possibleGates):
                 if idx in [usedGates[0] for usedGates in gatesToTry]:
-                    #print("already checked: skipping")
                     continue
                 lowerlimit, upperlimit, lineIdx, isHorizontal = currGate
                 startOfGate, endOfGate, cells = self.tryPlaceGate(lowerlimit, upperlimit, lineIdx, isHorizontal)
@@ -235,8 +224,6 @@ class PuzzleGrid:
                 if count == 0:
                     break
 
-        print("final count missing: ", count)
-
         return ""
     
     def shortenGate(self, startOfGate, endOfGate, cells, lineIdx, maxLength):
@@ -246,7 +233,6 @@ class PuzzleGrid:
         if startOfGate != None: length -= 1
         if endOfGate != None: length -= 1
 
-        #print("initial length:", length, cells, startOfGate, lineIdx, endOfGate)
         while length > randMaxLength:
             front = random.choice([True, False])
             if front:
@@ -269,8 +255,6 @@ class PuzzleGrid:
                 if endOfGate is None:
                     length -= 1
                 endOfGate = cells[-1]
-        
-        #print("end length:", length, cells, startOfGate, lineIdx, endOfGate)
             
         return startOfGate, endOfGate, cells
 

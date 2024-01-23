@@ -69,7 +69,6 @@ async def websocket_endpoint(websocket: WebSocket):
         
             
 
-
 def convertToTuple(data):
     if isinstance(data, list) and all(isinstance(i, int) for i in data):
         return tuple(data)

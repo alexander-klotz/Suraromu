@@ -41,74 +41,6 @@ class Generator:
         
         
         loop, H, V = createLoop(self.rows, self.cols)
-        print(H)
-        print(V)
-
-        '''        
-        H = np.array([[ True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,
-                False, False, False],
-                [False, False, False, False, False, False, False, False, False, False, False, False,
-                False, False, False],
-                [ True,  True,  True,  True,  True,  True,  True,  True, False,  True,  True, False,
-                True,  True, False],
-                [False, False, False, False, False, False, False, False, False, False, False,  True,
-                False, False, False],
-                [ True,  True,  True,  True, False, False,  True,  True, False, False, False, False,
-                False, False, False],
-                [False, False, False, False, False, False, False, False, False, False,  True,  True,
-                False,  True, False],
-                [False, False, False,  True, False, False,  True,  True,  True, False, False, False,
-                False, False, False],
-                [False, False, False, False, False, False, False, False, False, False, False, False,
-                False, False, False],
-                [False, False, False, False, False, False, False, False,  True,  True, False, False,
-                False, False, False],
-                [False, False, False, False, False, False, False, False, False, False, False, False,
-                False, False, False],
-                [False, False, False,  True,  True,  True,  True, False, False, False,  True,  True,
-                False,  True,  True],
-                [False, False, False, False, False, False, False,  True, False, False, False, False,
-                False, False, False],
-                [False,  True,  True,  True,  True,  True,  True,  True, False, False, False, False,
-                False, False,  True],
-                [False, False, False, False, False,  True,  True, False,  True,  True, False, False,
-                False, False, False],
-                [False,  True,  True,  True,  True, False, False, False, False, False, False, False,
-                True,  True, False],
-                [ True,  True,  True,  True,  True,  True,  True, False, False, False, False, False,
-                False, False, False]])
-        
-        V = np.array([[ True, False, False, False, False, False, False, False, False, False, False, False,
-                True, False, False, False],
-                [ True, False, False, False, False, False, False, False, False, False, False, False,
-                True, False, False, False],
-                [False, False, False, False, False, False, False, False,  True,  True, False,  True,
-                False, False,  True, False],
-                [False, False, False, False, False, False, False, False,  True,  True, False, False,
-                True, False,  True, False],
-                [ True, False, False, False,  True, False,  True, False, False,  True, False, False,
-                True, False,  True, False],
-                [ True, False, False, False,  True, False,  True, False, False,  True,  True, False,
-                False,  True, False, False],
-                [ True, False, False,  True, False, False, False, False, False, False,  True, False,
-                False,  True, False, False],
-                [ True, False, False,  True, False, False, False, False, False, False,  True, False,
-                False,  True, False, False],
-                [ True, False, False,  True, False, False, False, False,  True, False, False, False,
-                False,  True, False, False],
-                [ True, False, False,  True, False, False, False, False,  True, False, False, False,
-                False,  True, False, False],
-                [ True, False, False, False, False, False, False,  True,  True, False,  True, False,
-                True, False, False,  True],
-                [ True, False, False, False, False, False, False, False, False, False,  True, False,
-                True, False, False,  True],
-                [ True,  True, False, False, False, False, False, False,  True, False,  True, False,
-                True, False,  True, False],
-                [ True,  True, False, False, False,  True, False,  True, False, False, False, False,
-                True, False,  True, False],
-                [ True, False, False, False, False, False, False,  True, False, False, False, False,
-                False, False, False, False]])
-        '''
 
         edgeFunctions = edges.edgeFunctions(H, V)
         orderedEdges = edgeFunctions.getOrderedEdges()
@@ -118,7 +50,9 @@ class Generator:
         puzzleGridFinal = gates.PuzzleGrid(self.rows, self.cols)
         puzzleGridFinal.initialFillGrid(orderedEdges)
         puzzleGridFinal.initializeOrderedPossibleGates()        
-        puzzleGridFinal.chooseGates(4, gatesAmount, 3, False) # TODO: make this so we can change it from outside
+        puzzleGridFinal.chooseGates(4, gatesAmount, 3, False)
+        
+        
         # printing
         puzzleGridFinal.printGrid()
         puzzleGridFinal.printGates()
@@ -140,44 +74,22 @@ class Generator:
                 if cell[0] == 0 and cell[1] == 0:
                     # empty cell so we add it to the blocked cells instead
                     if self.isNextToLoop((i, j)):
-                        # TODO: maybe change this param for medium diff
                         if random.random() < 0.3/iteration:
-                            #print("skipped: ", (i, j))
                             continue
                     
                     blockedCells.append((i, j))
                     self.grid[(i, j)][0] = 2
 
-        
-
-
-        '''
-        randRow = random.randrange(1, self.rows-1)
-        randCol = random.randrange(1, self.cols-1)
-        randRow2 = random.randrange(1, self.rows-1)
-        randCol2 = random.randrange(1, self.cols-1)
-        for (i, j), cell in np.ndenumerate(self.grid):
-            if self.grid[(i, j)][0] == 2 and self.notGate((i, j)) and randRow == i:
-                # this is a blocked cell that is not part of a gate
-                for i in range(test)
-        '''
-
-        
+               
         # TODO: fill in the gate cells that are not reachable not sure how we do this
 
 
         # TODO: try to remove some gateCell ordering and see if we still have a single solution
 
-        # TODO: maybe for medium diff. we can just try to remove almost all ordering and then restart
-
-        
-        
-        # TODO: find some way to create medium/hard difficulty without relying on the solver too much 
-        # maybe for small size it is possible by simply restarting if the created puzzles has more than one solution (therefore we could stop the solver as soon as it finds two solutions)
         innerCounter = 0
         cellsToBlock = []
 
-        self.printGrid()
+        #self.printGrid()
 
         while innerCounter < 5:
 
@@ -199,15 +111,12 @@ class Generator:
 
             self.printGates()
             
-            #print(convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells)
             solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells)
             solutions = solver.solvePuzzle()
-            #print(solutions)
             
             if len(solutions) == 1:
                 print("done only one solution remains")
                 # TODO!!!!: try the solver with (all the) gates in unordered to get a bit of a harder puzzle probably...
-                # TODO: convert the gates so the webpage can use them
                 return self.rows, self.cols, self.startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, solutions[0]
 
             if len(solutions) == 0:

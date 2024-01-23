@@ -85,9 +85,7 @@ def convertPuzzleForWeb(rows, cols, startIndex, convertedVerticalSolverGates, co
         "startCell": [int(startIndex[0]), int(startIndex[1])],
         "gates": {
         },
-        "solution": [
-            # ... add the rest of your solution here ...
-        ]
+        "solution": solution
     }
 
     blockedCells = [list(tup) for tup in blockedCells]
@@ -135,15 +133,6 @@ def convertPuzzleForWeb(rows, cols, startIndex, convertedVerticalSolverGates, co
     print(puzzle)
     return puzzle
 
-
-def convert_int64_values(data):
-    if isinstance(data, dict):
-        return {k: convert_int64_values(v) for k, v in data.items()}
-    elif isinstance(data, list):
-        return [convert_int64_values(v) for v in data]
-    else:
-        print(data, type(data))
-        return data
 
 def convertToTuple(data):
     if isinstance(data, list) and all(isinstance(i, int) for i in data):
