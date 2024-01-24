@@ -53,7 +53,7 @@ const EditGameDialoge = (props) => {
         props.setPuzzle({
           ...props.puzzle,
           [selectedAttribute]: JSON.parse(attributeValue),
-          arrayHori: props.createInitialArray(props.puzzle["cols"], JSON.parse(attributeValue)-1),
+          arrayHori: props.createInitialArray(props.puzzle["rows"], JSON.parse(attributeValue)-1),
           arrayVert: props.createInitialArray(props.puzzle["rows"]-1, JSON.parse(attributeValue))
         })
       }else{
