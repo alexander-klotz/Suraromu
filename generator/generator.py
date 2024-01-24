@@ -84,8 +84,6 @@ class Generator:
         # TODO: fill in the gate cells that are not reachable not sure how we do this
 
 
-        # TODO: try to remove some gateCell ordering and see if we still have a single solution
-
         innerCounter = 0
         cellsToBlock = []
 
@@ -116,7 +114,11 @@ class Generator:
             
             if len(solutions) == 1:
                 print("done only one solution remains")
-                # TODO!!!!: try the solver with (all the) gates in unordered to get a bit of a harder puzzle probably...
+                print(len(blockedCells))
+                newBlockedCells = self.removeBlockedCells(blockedCells, convertedVerticalSolverGates, convertedHorizontalSolverGates)
+                blockedCells = newBlockedCells
+                print(len(blockedCells))
+                convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells = self.getMinimalGateOrdering(convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells)
                 return self.rows, self.cols, self.startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, solutions[0]
 
             if len(solutions) == 0:
@@ -244,6 +246,165 @@ class Generator:
             return [(r, c), (r, c+1)]
         else:
              return [(r, c), (r+1, c)]
+
+
+    def getMinimalGateOrdering(self, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells):
+        
+        for i in range(1, 5):
+            newConvertedVerticalSolverGates, newConvertedHorizontalSolverGates = convertedVerticalSolverGates.copy(), convertedHorizontalSolverGates.copy()
+
+            removalAmount = int((len(newConvertedVerticalSolverGates) + len(newConvertedHorizontalSolverGates))/i)
+
+            for j in range(removalAmount):
+                self.chooseAndNegateDictKey(newConvertedVerticalSolverGates, newConvertedHorizontalSolverGates)
+
+            solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, newConvertedVerticalSolverGates, newConvertedHorizontalSolverGates, blockedCells)
+            solutions = solver.solvePuzzle()
+
+            if len(solutions) == 1:
+                return newConvertedVerticalSolverGates, newConvertedHorizontalSolverGates, blockedCells
+
+
+        return convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells
+
+    def chooseAndNegateDictKey(self, gcv, gch):
+        # Combine the two dictionaries
+        combined = {**gcv, **gch}
+        
+        # Filter keys greater than 0
+        keys_greater_than_zero = [key for key in combined.keys() if key > 0]
+        
+        # If no keys are greater than 0, return None
+        if not keys_greater_than_zero:
+            print("ERROR!!!!!")
+            return None, None, None
+        
+        # Randomly select a key
+        selected_key = random.choice(keys_greater_than_zero)
+        
+        # Multiply the selected key by -1
+        negated_key = selected_key * -1
+        
+        # Replace the selected key in the original dictionary
+        if selected_key in gcv:
+            gcv[negated_key] = gcv.pop(selected_key)
+        else:
+            gch[negated_key] = gch.pop(selected_key)
+
+    
+    def removeBlockedCells(self, blockedCells, gcv, gch):
+        newBlockedCells = blockedCells.copy()
+        
+        for cell in newBlockedCells:
+            if not self.notGate(cell):
+                continue
+            verticalNeighbors = []
+            horizontalNeighbors = []
+
+            if 0 <= cell[0] - 1: verticalNeighbors.append((cell[0]-1, cell[1]))
+            if cell[0] + 1 < self.rows: verticalNeighbors.append((cell[0]+1, cell[1]))
+            
+            if 0 <= cell[1] - 1: horizontalNeighbors.append((cell[0], cell[1]-1))
+            if cell[1] + 1 < self.cols: horizontalNeighbors.append((cell[0], cell[1]+1))
+
+            # check if both the cell below and above are non blocking cells
+            if len(verticalNeighbors) == 2 and not (verticalNeighbors[0] in newBlockedCells) and not (verticalNeighbors[1] in newBlockedCells):
+                # try to remove this blocking cell
+                newBlockedCells.remove(cell)
+                print(cell)
+                # invoke solver and if only single solution keep this and return 
+                solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, gcv, gch, newBlockedCells)
+                solutions = solver.solvePuzzle()
+
+                if len(solutions) == 1:
+                    blockedCells = newBlockedCells.copy()
+                    print("CELLLLL: ", cell)
+                else:
+                    newBlockedCells = blockedCells.copy()
+                
+                continue
+            
+            # check if both the cell to the right and left are non blocking cells
+            if len(horizontalNeighbors) == 2 and not (horizontalNeighbors[0] in newBlockedCells) and not (horizontalNeighbors[1] in newBlockedCells):
+                # try to remove this blocking cell
+                newBlockedCells.remove(cell)
+                print(cell)
+                
+                # invoke solver and if only single solution keep this and return 
+                solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, gcv, gch, newBlockedCells)
+                solutions = solver.solvePuzzle()
+
+                if len(solutions) == 1:
+                    blockedCells = newBlockedCells.copy()
+                    print("CELLLLL: ", cell)
+                else:
+                    newBlockedCells = blockedCells.copy()
+        
+        return newBlockedCells
+            
+            
+
+    '''this does not work since the self.grid is not updated.... 
+    maybe instead search for blocked cells for whitch two neighbours are non blockedCell (check using in blockedCells) and then try to remove that 
+    def removeLineOfBlockedCells(self, blockedCells, gcv, gch):
+        newBlockedCells = blockedCells.copy()
+        linesToTry = (self.rows + self.cols)/20
+        randomRows = list(range(1, self.rows-1))
+        random.shuffle(randomRows)
+        randomCols = list(range(1, self.cols-1))
+        random.shuffle(randomCols)
+
+        for rRow in randomRows:
+            for rCol in randomCols:
+                # try to remove all the blocked Cells in both the row and the column
+                insideLoop = False
+                removed = False
+                print(len(newBlockedCells))
+                for c in range(self.cols):
+                    if self.grid[(rRow, c)][0] != 2:
+                        insideLoop = True
+                    
+                    if insideLoop:
+                        if self.grid[(rRow, c)][0] == 2 and self.notGate((rRow, c)):
+                            print((rRow, c))
+                            if (rRow, c) in newBlockedCells: 
+                                newBlockedCells.remove((rRow, c))
+                                removed = True
+                    if removed and self.grid[(rRow, c)][1] != 0:
+                        print(self.grid[(rRow, c)])
+                        break
+                    
+                    #TODO: make it so we end off the next time we hit the loop
+
+                insideLoop = False
+                removed = False
+                for r in range(self.rows):
+                    if self.grid[(r, rCol)][0] != 2:
+                        insideLoop = True
+                    
+                    if insideLoop:
+                        if self.grid[(r, rCol)][0] == 2 and self.notGate((r, rCol)):
+                            print((r, rCol))
+                            if (r, rCol) in newBlockedCells: 
+                                newBlockedCells.remove((r, rCol))
+                                removed = True
+                    if removed and self.grid[(r, rCol)][1] != 0:
+                        print(self.grid[(r, rCol)])
+                        break
+                
+                # revoke solver and if only single solution keep this and return 
+                solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, gcv, gch, newBlockedCells)
+                solutions = solver.solvePuzzle()
+
+                if len(solutions) == 1:
+                    print(len(newBlockedCells))
+                    print("removed: ", rRow, rCol)
+                    return newBlockedCells
+                else:
+                    newBlockedCells = blockedCells.copy()
+        return blockedCells
+    '''  
+        
 
 
     def printGrid(self):

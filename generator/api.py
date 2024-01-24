@@ -27,11 +27,11 @@ app.add_middleware(
 
 def generateRandomInteger(s):
     if s == 'small':
-        return random.randint(10, 15), random.randint(10, 15)
+        return random.randint(10, 13), random.randint(10, 13)
     elif s == 'medium':
-        return random.randint(15, 20), random.randint(15, 20)
+        return random.randint(13, 18), random.randint(13, 18)
     elif s == 'big':
-        return random.randint(21, 35), random.randint(21, 35)
+        return random.randint(19, 30), random.randint(19, 30)
     else:
         return None
 
@@ -127,9 +127,6 @@ def convertPuzzleForWeb(rows, cols, startIndex, convertedVerticalSolverGates, co
     puzzle["gates"]["0"] = unorderedGates
     puzzle["blockedCells"] = blockedCells
 
-    # TODO: convert the gates to the webpage gates
-
-    # TODO: add the solution from the solver
     print(puzzle)
     return puzzle
 

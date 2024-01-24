@@ -11,7 +11,7 @@ class PuzzleGrid:
         self.cols = cols
         '''
         encoding of grid:
-        [b, l, x]
+        [b, l]
         b (all the black things):
             0... no black element
             1... start cell
@@ -388,8 +388,6 @@ class PuzzleGrid:
 
         return convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, self.grid
 
-    def defineGateNumbers(self):
-        return ""
 
     def printGrid(self):
         for r in range(self.rows):
