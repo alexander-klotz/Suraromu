@@ -7,7 +7,7 @@ import random
 
 '''
 encoding of grid:
-[b, l, x]
+[b, l]
 b (all the black things):
     0... no black element
     1... start cell
@@ -22,8 +22,7 @@ l (all the grey lines):
     4... ┗
     5... ┓
     6... ┏
-x (gate number if needed):
-    x... gate number (maybe only for the end blocks or for all blocks)
+
 '''
 
 class Generator:
@@ -61,12 +60,13 @@ class Generator:
 
         convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, self.grid = puzzleGridFinal.getGatesConverted()
         
-        # for easy difficulty just place a bunch of black cells maybe even all possible ones and then just call the solver to check if only one solution remains
-
+        # don't use some rows and cols for blocked Cells to try and make the solution more interesting
         randRow = random.randrange(1, self.rows-1)
         randCol = random.randrange(1, self.cols-1)
         randRow2 = random.randrange(1, self.rows-1)
         randCol2 = random.randrange(1, self.cols-1)
+
+        # insert blockedCells to try and create one solution
         if self.difficulty == "easy":
             for (i, j), cell in np.ndenumerate(self.grid):
                 if i == randRow or j == randCol or i == randRow2 or j == randCol2:
@@ -74,6 +74,7 @@ class Generator:
                 if cell[0] == 0 and cell[1] == 0:
                     # empty cell so we add it to the blocked cells instead
                     if self.isNextToLoop((i, j)):
+                        # 30% of the cells next to the loop we don't block in the beginning
                         if random.random() < 0.3/iteration:
                             continue
                     
@@ -83,21 +84,15 @@ class Generator:
                
         # TODO: fill in the gate cells that are not reachable not sure how we do this
 
-
         innerCounter = 0
         cellsToBlock = []
 
-        #self.printGrid()
 
         while innerCounter < 5:
 
             innerCounter += 1
             # cells that are part of a gate we do not block
             cellsToBlock = [cellToBlock for cellToBlock in cellsToBlock if self.grid[cellToBlock][0] != 3 and self.grid[cellToBlock][0] != 4]
-            
-            # randomly remove some to maybe find a less filled out solution
-            if innerCounter < 2:
-                cellsToBlock = random.sample(cellsToBlock, len(cellsToBlock) // 2)
             
             # if we are in the second iteration there should be some cells we need to block
             blockedCells = blockedCells + cellsToBlock
@@ -133,7 +128,6 @@ class Generator:
 
             # first try to find a bestFit for which all other lists contain atleast one other element and if not such list exists
             singleSolution, cellsToBlock = self.tryToFindUnique(visitedCellsAllSolutions)
-            # filter the cellsToBlock
 
             if cellsToBlock != None:
                 # we should have only a single solutions now but better to still check to make sure
@@ -142,7 +136,7 @@ class Generator:
                 continue
 
             # second way of trying to find cells that we should block
-            bestFit, cellsToBlock = self.find_least_common(visitedCellsAllSolutions)
+            bestFit, cellsToBlock = self.findLeastCommon(visitedCellsAllSolutions)
 
             if cellsToBlock == []:
                 print("!Error! no cells to Block anymore to guarantee unique solution")
@@ -177,32 +171,29 @@ class Generator:
     def listCompare(self, listToCheck, remainingLists):
         return all( any(x in y for y in remainingLists) for x in listToCheck)
 
-    def find_least_common(self, solutionsCells):
-        # Create a set for each list
-        set_solutionsCells = [set(l) for l in solutionsCells]
+    def findLeastCommon(self, solutionsCells):
+        setSolutionsCells = [set(l) for l in solutionsCells]
         
-        # Find the union of all sets
-        union_set = set.union(*set_solutionsCells)
+        unionSet = set.union(*setSolutionsCells)
         
-        # Initialize variables
-        least_common_list = None
-        least_common_count = float('inf')
-        missing_elements = None
+        leastCommonList = None
+        leastCommonCnt = float('inf')
+        missingElements = None
         
-        # Iterate over each set
-        for s in set_solutionsCells:
-            # Find the difference between the union set and the current set
-            diff = union_set - s
+        # iterate over each set
+        for s in setSolutionsCells:
+            # find the difference
+            diff = unionSet - s
             
-            # If the size of the difference is less than the least common count
-            if len(diff) < least_common_count:
-                # Update the least common count and list
-                least_common_count = len(diff)
-                least_common_list = list(s)
-                missing_elements = list(diff)
+            # check if newly smallest set
+            if len(diff) < leastCommonCnt:
+                # update
+                leastCommonCnt = len(diff)
+                leastCommonList = list(s)
+                missingElements = list(diff)
         
-        print(least_common_list, missing_elements)
-        return least_common_list, missing_elements
+        print(leastCommonList, missingElements)
+        return leastCommonList, missingElements
 
     '''
     check if a blocked cell is part of a gate
@@ -268,28 +259,19 @@ class Generator:
         return convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells
 
     def chooseAndNegateDictKey(self, gcv, gch):
-        # Combine the two dictionaries
         combined = {**gcv, **gch}
         
-        # Filter keys greater than 0
-        keys_greater_than_zero = [key for key in combined.keys() if key > 0]
+        # find keys > 0
+        keysBiggerZero = [key for key in combined.keys() if key > 0]
         
-        # If no keys are greater than 0, return None
-        if not keys_greater_than_zero:
-            print("ERROR!!!!!")
-            return None, None, None
+        chosenKey = random.choice(keysBiggerZero)
         
-        # Randomly select a key
-        selected_key = random.choice(keys_greater_than_zero)
+        negChosenKey = chosenKey * -1
         
-        # Multiply the selected key by -1
-        negated_key = selected_key * -1
-        
-        # Replace the selected key in the original dictionary
-        if selected_key in gcv:
-            gcv[negated_key] = gcv.pop(selected_key)
+        if chosenKey in gcv:
+            gcv[negChosenKey] = gcv.pop(chosenKey)
         else:
-            gch[negated_key] = gch.pop(selected_key)
+            gch[negChosenKey] = gch.pop(chosenKey)
 
     
     def removeBlockedCells(self, blockedCells, gcv, gch):
@@ -341,70 +323,6 @@ class Generator:
                     newBlockedCells = blockedCells.copy()
         
         return newBlockedCells
-            
-            
-
-    '''this does not work since the self.grid is not updated.... 
-    maybe instead search for blocked cells for whitch two neighbours are non blockedCell (check using in blockedCells) and then try to remove that 
-    def removeLineOfBlockedCells(self, blockedCells, gcv, gch):
-        newBlockedCells = blockedCells.copy()
-        linesToTry = (self.rows + self.cols)/20
-        randomRows = list(range(1, self.rows-1))
-        random.shuffle(randomRows)
-        randomCols = list(range(1, self.cols-1))
-        random.shuffle(randomCols)
-
-        for rRow in randomRows:
-            for rCol in randomCols:
-                # try to remove all the blocked Cells in both the row and the column
-                insideLoop = False
-                removed = False
-                print(len(newBlockedCells))
-                for c in range(self.cols):
-                    if self.grid[(rRow, c)][0] != 2:
-                        insideLoop = True
-                    
-                    if insideLoop:
-                        if self.grid[(rRow, c)][0] == 2 and self.notGate((rRow, c)):
-                            print((rRow, c))
-                            if (rRow, c) in newBlockedCells: 
-                                newBlockedCells.remove((rRow, c))
-                                removed = True
-                    if removed and self.grid[(rRow, c)][1] != 0:
-                        print(self.grid[(rRow, c)])
-                        break
-                    
-                    #TODO: make it so we end off the next time we hit the loop
-
-                insideLoop = False
-                removed = False
-                for r in range(self.rows):
-                    if self.grid[(r, rCol)][0] != 2:
-                        insideLoop = True
-                    
-                    if insideLoop:
-                        if self.grid[(r, rCol)][0] == 2 and self.notGate((r, rCol)):
-                            print((r, rCol))
-                            if (r, rCol) in newBlockedCells: 
-                                newBlockedCells.remove((r, rCol))
-                                removed = True
-                    if removed and self.grid[(r, rCol)][1] != 0:
-                        print(self.grid[(r, rCol)])
-                        break
-                
-                # revoke solver and if only single solution keep this and return 
-                solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, gcv, gch, newBlockedCells)
-                solutions = solver.solvePuzzle()
-
-                if len(solutions) == 1:
-                    print(len(newBlockedCells))
-                    print("removed: ", rRow, rCol)
-                    return newBlockedCells
-                else:
-                    newBlockedCells = blockedCells.copy()
-        return blockedCells
-    '''  
-        
 
 
     def printGrid(self):

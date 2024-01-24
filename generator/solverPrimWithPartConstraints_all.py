@@ -504,6 +504,8 @@ class SuraromuSolverPrimWithPartConstraints:
             if len(incorrect_loops) == 0 and correct_loop != []:
                 
                 solutions.append((self.convert_boolrefs_to_booleans(h), self.convert_boolrefs_to_booleans(v)))
+
+                # prematurely return the solutions to make the time the solver takes up shorter
                 if len(solutions) > 30:
                     return solutions
                 #self.print_grid(h, v)

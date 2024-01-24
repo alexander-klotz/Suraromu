@@ -27,11 +27,11 @@ app.add_middleware(
 
 def generateRandomInteger(s):
     if s == 'small':
-        return random.randint(10, 13), random.randint(10, 13)
+        return random.randint(8, 12), random.randint(8, 12)
     elif s == 'medium':
-        return random.randint(13, 18), random.randint(13, 18)
+        return random.randint(12, 17), random.randint(12, 17)
     elif s == 'big':
-        return random.randint(19, 30), random.randint(19, 30)
+        return random.randint(17, 25), random.randint(17, 25)
     else:
         return None
 
