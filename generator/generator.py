@@ -88,7 +88,7 @@ class Generator:
         cellsToBlock = []
 
 
-        while innerCounter < 5:
+        while innerCounter < 10:
 
             innerCounter += 1
             # cells that are part of a gate we do not block
@@ -104,7 +104,7 @@ class Generator:
 
             self.printGates()
             
-            solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells)
+            solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, 54 - innerCounter*4)
             solutions = solver.solvePuzzle()
             
             if len(solutions) == 1:
@@ -241,18 +241,19 @@ class Generator:
 
     def getMinimalGateOrdering(self, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells):
         
-        for i in range(1, 5):
+        for i in range(10):
             newConvertedVerticalSolverGates, newConvertedHorizontalSolverGates = convertedVerticalSolverGates.copy(), convertedHorizontalSolverGates.copy()
 
-            removalAmount = int((len(newConvertedVerticalSolverGates) + len(newConvertedHorizontalSolverGates))/i)
+            removalAmount = int((len(newConvertedVerticalSolverGates) + len(newConvertedHorizontalSolverGates))*(1 - i/10))
 
             for j in range(removalAmount):
                 self.chooseAndNegateDictKey(newConvertedVerticalSolverGates, newConvertedHorizontalSolverGates)
 
-            solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, newConvertedVerticalSolverGates, newConvertedHorizontalSolverGates, blockedCells)
+            solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, newConvertedVerticalSolverGates, newConvertedHorizontalSolverGates, blockedCells, 2)
             solutions = solver.solvePuzzle()
 
             if len(solutions) == 1:
+                print("REMOVAL AMOUNT = ", removalAmount, (1 - i/10), (len(newConvertedVerticalSolverGates) + len(newConvertedHorizontalSolverGates)), i)
                 return newConvertedVerticalSolverGates, newConvertedHorizontalSolverGates, blockedCells
 
 
@@ -290,30 +291,13 @@ class Generator:
             if cell[1] + 1 < self.cols: horizontalNeighbors.append((cell[0], cell[1]+1))
 
             # check if both the cell below and above are non blocking cells
-            if len(verticalNeighbors) == 2 and not (verticalNeighbors[0] in newBlockedCells) and not (verticalNeighbors[1] in newBlockedCells):
+            if (len(verticalNeighbors) == 2 and not (verticalNeighbors[0] in newBlockedCells) and not (verticalNeighbors[1] in newBlockedCells)) or (
+                len(horizontalNeighbors) == 2 and not (horizontalNeighbors[0] in newBlockedCells) and not (horizontalNeighbors[1] in newBlockedCells)):
                 # try to remove this blocking cell
                 newBlockedCells.remove(cell)
                 print(cell)
                 # invoke solver and if only single solution keep this and return 
-                solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, gcv, gch, newBlockedCells)
-                solutions = solver.solvePuzzle()
-
-                if len(solutions) == 1:
-                    blockedCells = newBlockedCells.copy()
-                    print("CELLLLL: ", cell)
-                else:
-                    newBlockedCells = blockedCells.copy()
-                
-                continue
-            
-            # check if both the cell to the right and left are non blocking cells
-            if len(horizontalNeighbors) == 2 and not (horizontalNeighbors[0] in newBlockedCells) and not (horizontalNeighbors[1] in newBlockedCells):
-                # try to remove this blocking cell
-                newBlockedCells.remove(cell)
-                print(cell)
-                
-                # invoke solver and if only single solution keep this and return 
-                solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, gcv, gch, newBlockedCells)
+                solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, gcv, gch, newBlockedCells, 2)
                 solutions = solver.solvePuzzle()
 
                 if len(solutions) == 1:

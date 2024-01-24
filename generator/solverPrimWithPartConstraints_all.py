@@ -10,8 +10,9 @@ class SuraromuSolverPrimWithPartConstraints:
     gateCellsVertical: Dictionairy containing all the vertical gates (int > 0 for ordered gates and int smaller 0 for unordered gates)
     gateCellsHorizontal: Dictionairy containing all the horizontal gates (int > 0 for ordered gates and int smaller 0 for unordered gates)
     blocked_cells: the blocked cells that are not allowed to be used (most of the time cells next to the gates)
+    solutionsRequired: integer that specifies the amount of solutions that should be found
     """
-    def __init__(self, rows, columns, startIndex, gateCellsVertical, gateCellsHorizontal, blocked_cells):
+    def __init__(self, rows, columns, startIndex, gateCellsVertical, gateCellsHorizontal, blocked_cells, solutionsRequired):
         self.rows = rows
         self.columns = columns
         self.startIndex = startIndex
@@ -20,6 +21,7 @@ class SuraromuSolverPrimWithPartConstraints:
         self.blocked_cells = blocked_cells
         self.H = []
         self.V = []
+        self.solutionsRequired = solutionsRequired
 
 
     def print_grid(self, h, v):
@@ -506,7 +508,7 @@ class SuraromuSolverPrimWithPartConstraints:
                 solutions.append((self.convert_boolrefs_to_booleans(h), self.convert_boolrefs_to_booleans(v)))
 
                 # prematurely return the solutions to make the time the solver takes up shorter
-                if len(solutions) > 30:
+                if len(solutions) >= self.solutionsRequired:
                     return solutions
                 #self.print_grid(h, v)
                 # remove this solution
