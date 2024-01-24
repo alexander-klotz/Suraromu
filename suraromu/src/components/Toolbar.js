@@ -26,12 +26,14 @@ const Toolbar = (props) => {
         <div style={{ display: 'flex', justifyContent: 'space-evenly'}}>
         <ThemeProvider theme={theme}>
             <Button
+                style={{marginLeft:"20%"}}
                 onClick={() => handleChoiceClick(1)}
                 variant={props.toolType === 1 ? 'contained' : 'outlined'}
             >
                 <TimelineIcon style={{ color: 'green', paddingRight:"20%"}}/> Line
             </Button>
             <Button
+                style={{marginRight:"20%"}}
                 onClick={() => handleChoiceClick(2)}
                 variant={props.toolType === 2 ? 'contained' : 'outlined'}
             >

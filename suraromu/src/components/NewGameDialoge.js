@@ -125,6 +125,7 @@ const NewGameDialoge = (props) => {
     if (objectData.puzzle !== '' && !objectData.generated){
       newPuzzle = puzzles[objectData.puzzle]
       props.setNewPuzzle(newPuzzle)
+      handleClose()
     }else if (objectData.generated){
       handleGeneration(newPuzzle)
     }

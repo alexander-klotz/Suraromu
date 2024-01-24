@@ -168,8 +168,6 @@ function Grid(props) {
     }
   }
 
-  console.log(gateGrid)
-
   function getBlockedGateCells(gate) {
     const cells = []
     const row = gate.startCell[0]

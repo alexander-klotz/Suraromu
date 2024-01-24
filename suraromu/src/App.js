@@ -111,8 +111,6 @@ function App() {
       }
     }
 
-    
-
     setPuzzle({
       ...newPuzzle,
       arrayHori: newArrayHori,
@@ -160,7 +158,7 @@ function App() {
 
         
         
-        <Controls deleteFunction={deleteConnections} setNewPuzzle={setNewPuzzle} setPuzzle={setPuzzle} setHistory={setHistory} history={history} puzzle={puzzle} setShouldTrack={setShouldTrack}/>
+        <Controls deleteFunction={deleteConnections} setNewPuzzle={setNewPuzzle} setPuzzle={setPuzzle} setHistory={setHistory} history={history} puzzle={puzzle} setShouldTrack={setShouldTrack} createInitialArray={createInitialArray}/>
         <Toolbar toolType={toolType} setToolType={setToolType}/>
         <Board puzzle={puzzle} setPuzzle={setPuzzle} setHistory={setHistory} history={history} toolType={toolType}/>
         

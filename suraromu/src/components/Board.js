@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 
 export default function Board(props) {
   
-  const [size, setSize] = useState(0); // Initial size
+  const [size, setSize] = useState(30); // Initial size
   const buttonStyle = {
     color: "black",
   };

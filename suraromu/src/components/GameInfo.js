@@ -30,7 +30,7 @@ const [infoVisibility, setInfoVisibility] = useState(false);
                         4. Numbers next to gates denote the order of passing with no number meaning arbitrary position of this gate in the ordering.<br />
                     </p>
                     <p>
-                        To place lines simply click on the intersections of two cells. To help with solving there is also the possibility to block connections.
+                        To place lines simply click on the intersections of two cells. To help with solving there is also the possibility to block intersections.
                     </p>
                 </div>}
         </>

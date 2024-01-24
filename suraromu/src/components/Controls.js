@@ -1,9 +1,9 @@
 import Button from '@mui/material/Button';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import DoneOutlineOutlinedIcon from '@mui/icons-material/DoneOutlineOutlined';
 import NewGameDialoge from './NewGameDialoge';
 import UndoIcon from '@mui/icons-material/Undo';
 import SolveDialoge from './SolveDialoge'
+import EditGameDialoge from './EditGameDialoge'
 
 export default function Controls(props) {
 
@@ -33,9 +33,7 @@ export default function Controls(props) {
 
             <NewGameDialoge {...props}/>
 
-            <Button style={buttonStyle} startIcon={<DoneOutlineOutlinedIcon style={iconStyle}/>}>
-                Check
-            </Button>
+            <EditGameDialoge {...props}/>
 
             <SolveDialoge {...props}/>
             
