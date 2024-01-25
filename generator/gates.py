@@ -157,7 +157,7 @@ class PuzzleGrid:
         return
     
     
-    def chooseGates(self, maxLength, count, difficulty, placeAll):
+    def chooseGates(self, maxLength, count, placeAll):
 
         # try to place given amount (count) of gates using random sampling
         gatesToTry = []

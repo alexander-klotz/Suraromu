@@ -49,7 +49,7 @@ class Generator:
         puzzleGridFinal = gates.PuzzleGrid(self.rows, self.cols)
         puzzleGridFinal.initialFillGrid(orderedEdges)
         puzzleGridFinal.initializeOrderedPossibleGates()        
-        puzzleGridFinal.chooseGates(4, gatesAmount, 3, False)
+        puzzleGridFinal.chooseGates(4, gatesAmount, False)
         
         
         # printing
