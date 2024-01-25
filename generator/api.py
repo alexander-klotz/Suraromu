@@ -1,10 +1,11 @@
 # Backend
-from fastapi import FastAPI, WebSocket, BackgroundTasks
-from time import sleep
+from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from generator import Generator
 import json
 import random
+import multiprocessing
+import asyncio
 
 app = FastAPI()
 
@@ -24,8 +25,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def generate(generator, genPuzzle):
+    triesCounter = 1
+    maxTries = 5
+    while triesCounter <= maxTries:
+        rows, cols, startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, solution = generator.generate(triesCounter)
+        if rows != None:
+            print("DONE UNIQUE PUZZLE FOUND after ", triesCounter, "iterations")
+            returnValue = convertPuzzleForWeb(rows, cols, startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, solution)
+            break
+        triesCounter += 1
+    genPuzzle.value = returnValue
 
-def generateRandomInteger(s):
+def generateRandomSize(s):
     if s == 'small':
         return random.randint(8, 12), random.randint(8, 12)
     elif s == 'medium':
@@ -39,40 +51,39 @@ def generateRandomInteger(s):
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
 
-    
-    triesCounter = 1
-    maxTries = 10
-    while triesCounter <= maxTries:
+    manager = multiprocessing.Manager()
+    genPuzzle = manager.Value(object, None)
 
-        # TODO: currently we get stuck here if we are on the second iteration we need to change the control flow to fix this
-        data = await websocket.receive_text()
 
-        if data != "stop":
-            await websocket.send_text("starting generation")
+    p = None
+    while True:
+        try:
+            data = await asyncio.wait_for(websocket.receive_text(), timeout=1.0)
             
-            data = json.loads(data)
-            data = convertToTuple(data)
+            if data != "abort":
+                await websocket.send_text("starting generation")
+                genPuzzle.value = None
 
-            randRows, randCols = generateRandomInteger(data["size"])
+                data = json.loads(data)
+                data = convertToTuple(data)
 
-
-            test = Generator(randRows, randCols, data["difficulty"])
-            rows, cols, startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, solution = test.generate(triesCounter)
-            if rows != None:
-                print("DONE UNIQUE PUZZLE FOUND after ", triesCounter, "iterations")
-                puzzle = convertPuzzleForWeb(rows, cols, startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, solution)
-        
-
-                await websocket.send_text(json.dumps(puzzle, default=int))
-                await websocket.send_text("generation finished")
+                randRows, randCols = generateRandomSize(data["size"])
+                generator = Generator(randRows, randCols, data["difficulty"])
+                p = multiprocessing.Process(target=generate, args=(generator, genPuzzle))
+                p.start()
                 
-            else:
-                await websocket.send_text(f"attempt Nr. {triesCounter} out of {maxTries} failed")
-            triesCounter += 1
+            elif data == "abort":
+                if p is not None and p.is_alive():
+                    p.terminate()  # Terminate the process
+                    print("terminated process")
+                await websocket.send_text("Generation stopped")
 
-        elif data == "stop":
-            await websocket.send_text("generation stopped")
-            await websocket.close()
+        except asyncio.TimeoutError:
+            if p != None and not p.is_alive() and genPuzzle.value != None:
+                p = None
+                await websocket.send_text(json.dumps(genPuzzle.value, default=int))
+            continue  # No message received, continue to the next iteration
+
 
 
 def convertPuzzleForWeb(rows, cols, startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, solution):
