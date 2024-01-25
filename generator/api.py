@@ -27,14 +27,13 @@ app.add_middleware(
 def generate(generator, genPuzzle):
     triesCounter = 1
     maxTries = 5
-    print("Started generation")
     while triesCounter <= maxTries:
         rows, cols, startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, solution = generator.generate(triesCounter)
         if rows != None:
             print("DONE UNIQUE PUZZLE FOUND after ", triesCounter, "tries")
             returnValue = convertPuzzleForWeb(rows, cols, startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, solution)
             break
-        print("Try number ", triesCounter, " failed")
+        print("Try number ", triesCounter, " failed", flush=True)
         triesCounter += 1
 
     genPuzzle.value = returnValue
@@ -71,6 +70,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
                 randRows, randCols = generateRandomSize(data["size"])
                 generator = Generator(randRows, randCols, data["difficulty"])
+                print("Started generation")
                 p = multiprocessing.Process(target=generate, args=(generator, genPuzzle))
                 p.start()
                 
@@ -84,6 +84,7 @@ async def websocket_endpoint(websocket: WebSocket):
             if p != None and not p.is_alive() and genPuzzle.value != None:
                 p = None
                 await websocket.send_text(json.dumps(genPuzzle.value, default=int))
+                genPuzzle.value = None
             continue  # No message received, continue to the next iteration
 
 

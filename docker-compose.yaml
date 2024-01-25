@@ -16,6 +16,7 @@ services:
   solver:
     build: ./solver
     container_name: solver_python_c
+    restart: on-failure
     ports:
       - "5000:5000"
     volumes:
@@ -25,6 +26,7 @@ services:
   generator:
     build: ./generator
     container_name: generator_python_c
+    restart: on-failure
     ports:
       - "4000:4000"
     volumes:

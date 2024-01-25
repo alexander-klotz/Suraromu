@@ -24,7 +24,6 @@ app.add_middleware(
 )
 
 def solve(solver, solutions):
-    print("Started solving")
     returnValue = solver.solvePuzzle()
     solutions.value = returnValue
 
@@ -45,6 +44,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 solutions.value = None
                 data = json.loads(data)
                 data = convertToTuple(data)
+                print("Started solving")
                 solver = SuraromuSolver(data["rows"], data["cols"], data["startIndex"], data["gcv"], data["gch"], data["blockedCells"])
                 
                 p = multiprocessing.Process(target=solve, args=(solver, solutions))
@@ -53,7 +53,7 @@ async def websocket_endpoint(websocket: WebSocket):
             elif data == "abort":
                 if p is not None and p.is_alive():
                     p.terminate()  # Terminate the process
-                    print("terminated process")
+                    print("terminated process", flush=True)
                 await websocket.send_text("Calculation stopped")
 
 
@@ -61,8 +61,9 @@ async def websocket_endpoint(websocket: WebSocket):
         except asyncio.TimeoutError:
             if p != None and not p.is_alive() and solutions.value != None:
                 p = None
-                print("DONE SOLUTION FOUND")
+                print("DONE SOLUTION FOUND", flush=True)
                 await websocket.send_text(json.dumps(solutions.value))
+                solutions.value = None
             continue  # No message received, continue to the next iteration
 
         

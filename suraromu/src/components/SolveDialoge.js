@@ -74,8 +74,14 @@ const SolveDialoge = (props) => {
 
   const updateArray = (solution, array) => {
     // Create a new array based on the boolean array
+    console.log("help", solution, array)
     let newArray = solution.map((row, i) => 
         row.map((item, j) => {
+          console.log("i:", i)
+          console.log("j:", j)
+          console.log("item:", item)
+          console.log("array:", array[i][j])
+          console.log("me", i, j, item, array[i][j])
           if(item){
             return 1
           }else if (array[i][j] === 1){
@@ -138,7 +144,6 @@ const SolveDialoge = (props) => {
           handleClose()
         }, 2000);
 
-        
         
         let newArrayHori = updateArray(solution[0], [...props.puzzle.arrayHori]);
         let arrayVert = updateArray(solution[1], [...props.puzzle.arrayVert]);
