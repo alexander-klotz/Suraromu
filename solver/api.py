@@ -1,6 +1,5 @@
 # Backend
-from fastapi import FastAPI, WebSocket, BackgroundTasks
-from time import sleep
+from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from solver import SuraromuSolver
 import json
@@ -37,7 +36,6 @@ async def websocket_endpoint(websocket: WebSocket):
     solutions = manager.Value(object, None)
 
     p = None
-    terminated = False
     while True:
         try:
             data = await asyncio.wait_for(websocket.receive_text(), timeout=1.0)
