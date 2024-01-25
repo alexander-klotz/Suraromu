@@ -29,7 +29,6 @@ export default function Cell(props) {
             resizeObserver.disconnect();
         };
     }, [content]);
-    
 
     function getCellType(idx) {
         let type = 0

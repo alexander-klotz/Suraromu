@@ -25,6 +25,7 @@ app.add_middleware(
 )
 
 def solve(solver, solutions):
+    print("Started solving")
     returnValue = solver.solvePuzzle()
     solutions.value = returnValue
 

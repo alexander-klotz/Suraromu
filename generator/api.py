@@ -27,13 +27,16 @@ app.add_middleware(
 def generate(generator, genPuzzle):
     triesCounter = 1
     maxTries = 5
+    print("Started generation")
     while triesCounter <= maxTries:
         rows, cols, startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, solution = generator.generate(triesCounter)
         if rows != None:
             print("DONE UNIQUE PUZZLE FOUND after ", triesCounter, "tries")
             returnValue = convertPuzzleForWeb(rows, cols, startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, solution)
             break
+        print("Try number ", triesCounter, " failed")
         triesCounter += 1
+
     genPuzzle.value = returnValue
 
 def generateRandomSize(s):
