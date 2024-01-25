@@ -61,6 +61,7 @@ async def websocket_endpoint(websocket: WebSocket):
         except asyncio.TimeoutError:
             if p != None and not p.is_alive() and solutions.value != None:
                 p = None
+                print("DONE SOLUTION FOUND")
                 await websocket.send_text(json.dumps(solutions.value))
             continue  # No message received, continue to the next iteration
 

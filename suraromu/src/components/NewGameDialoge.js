@@ -44,8 +44,8 @@ const NewGameDialoge = (props) => {
 
   useEffect(() => {
       ws.current = new WebSocket('ws://localhost:4000/ws');
-      ws.current.onopen = () => console.log("ws opened");
-      ws.current.onclose = () => console.log("ws closed");
+      ws.current.onopen = () => console.log("generator ws opened");
+      ws.current.onclose = () => console.log("generator ws closed");
 
       const wsCurrent = ws.current;
 
@@ -85,7 +85,7 @@ const NewGameDialoge = (props) => {
   const handleAbort = () => {
     if (!ws.current) return;
     if (ws.current.readyState === WebSocket.OPEN) {
-      console.log('abort')
+      console.log('generator abort')
       ws.current.send('abort');
     }
     setAbort(true);
@@ -101,13 +101,12 @@ const NewGameDialoge = (props) => {
     if (value === true){
       setObjectData((prevState) => ({
         ...prevState,
+        // eslint-disable-next-line
         ['difficulty']: 'easy',
       }));
     }
 
   };
-
-
 
 
   const puzzles = getPuzzles(objectData.difficulty, objectData.size)
@@ -149,21 +148,8 @@ const NewGameDialoge = (props) => {
 
     
     ws.current.addEventListener('message', function (event) {
-      
-      // TODO: for the error we need to change what we searched for
-      if (event.data === "[]"){
-        console.log('Solver did not find a solution: ', event.data);
-        setIsLoading(false)
-        // display error message to the user
-        setOpenError(true)
-        setTimeout(() => {
-          handleClose()
-        }, 4000);
 
-        
-      }
-
-      else if(event.data[0] === "{"){
+      if(event.data[0] === "{"){
 
         genPuzzle = JSON.parse(event.data)
         setIsLoading(false)
@@ -175,7 +161,7 @@ const NewGameDialoge = (props) => {
           handleClose()
         }, 2000);
       }
-      console.log('Message from server: ', event.data);
+      console.log('Message from generator: ', event.data);
     });
     
     

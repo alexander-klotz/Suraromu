@@ -53,7 +53,6 @@ def drawCycle(rows, cols, fillPercentage):
           
         goodCount = len(possGoodIdxs)
         badCount = len(possBadIdxs)
-        #print("good:", goodCount, " bad:", badCount)
         
         if goodCount + badCount == 0 : break
         while True:
@@ -83,7 +82,7 @@ def drawCycle(rows, cols, fillPercentage):
     grid = flood_fill(grid, (0, 0), 3, connectivity=1)
     grid[grid == 0] = 1
     grid[grid == 3] = 0
-    print_colored_grid(grid)
+    #print_colored_grid(grid)
 
     return grid
 
@@ -137,6 +136,5 @@ def getCycleEdges(grid):
 def createLoop(rows, cols):
     loop = drawCycle(int(rows/2) + 1, int(cols/2) + 1, 0.7)
     loop = loop.repeat(2,axis=0).repeat(2,axis=1)
-    print_colored_grid(loop)
     V, H = getCycleEdges(loop)
     return loop, H, V

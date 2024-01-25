@@ -1,4 +1,3 @@
-# Backend
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from generator import Generator
@@ -138,7 +137,6 @@ def convertPuzzleForWeb(rows, cols, startIndex, convertedVerticalSolverGates, co
     puzzle["gates"]["0"] = unorderedGates
     puzzle["blockedCells"] = blockedCells
 
-    print(puzzle)
     return puzzle
 
 

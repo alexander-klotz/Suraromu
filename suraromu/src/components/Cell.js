@@ -9,26 +9,8 @@ export default function Cell(props) {
     const classNames = ["cell", "blockedCell", "gateHoriCell", "gateVertCell", "gateNumberCell", "startCell"]
     const idx2D = [Math.floor(props.index/(props.puzzle.cols)), props.index%(props.puzzle.cols)]
     getCellType(idx2D)
-    
-
-    const handleMouseDown = event => {
-        props.setquickDraw({ isMouseDown: true, prevCell: props.index });
-        //console.log(`Mouse down at cell: ${props.index}`);
-    };
-
-    const handleMouseUp = (e) => {
-        props.setquickDraw({ isMouseDown: false });
-    };
-
-    const handleMouseEnter = (e) => {
-        if (props.quickDraw.isMouseDown) {
-            //console.log(`Moved from cell ${props.quickDraw.prevCell} to ${props.index}`);
-            props.setquickDraw({ prevCell: props.index });
-        }
-    };
 
     
-    // TODO: maybe make this fixed by calculating it in the Grid.js
     useEffect(() => {
         const outerDiv = outerDivRef.current;
         const pElement = outerDiv.querySelector('p');
@@ -101,9 +83,6 @@ export default function Cell(props) {
 
     return(
         <div ref={outerDivRef} key={props.index} className={classNames[getCellType(idx2D)]} 
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-            onMouseEnter={handleMouseEnter}
         >
             <p className={"cellText" + (getCellType(idx2D) === 5 ? "start" : "")}>{content}</p>
         </div>  

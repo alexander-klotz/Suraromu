@@ -472,17 +472,12 @@ class SuraromuSolver:
 
         incorrect_loops = [1]
 
-        print("setup is done")
-
         while s.check() == sat:
             m = s.model()
             h = [ [ m.evaluate(self.H[i][j]) for j in range(self.columns-1) ]
                 for i in range(self.rows) ]
             v = [ [ m.evaluate(self.V[i][j]) for j in range(self.columns) ]
                 for i in range(self.rows-1) ]
-
-            # TODO: find loops that are not connected with starting point
-
 
             h_used = [ [ self.H[i][j] for j in range(self.columns-1) if m.evaluate(self.H[i][j]) ]
                 for i in range(self.rows)]
@@ -498,7 +493,6 @@ class SuraromuSolver:
             if correct_loop != []:
                 return (self.convert_boolrefs_to_booleans(h), self.convert_boolrefs_to_booleans(v))
             
-            #self.print_grid(h, v)
             for wrongPart in wrongParts:
                 partBlocking = Not(And(wrongPart))
                 s.add(partBlocking)

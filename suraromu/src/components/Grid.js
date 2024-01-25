@@ -2,39 +2,9 @@ import React from 'react'
 import Cell from './Cell'
 import VertLine from './VertLine'
 import HoriLine from './HoriLine'
-import { useRef, useEffect, useState, useMemo } from 'react';
+import { useMemo } from 'react';
 
 function Grid(props) {
-
-  const gridContainerRef = useRef(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [containerHeight, setContainerHeight] = useState(0);
-  const [quickDraw, setquickDraw] = useState({
-    isMouseDown: false,
-    prevCell: null,
-  });
-
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (gridContainerRef.current) {
-        const { width, height } = gridContainerRef.current.getBoundingClientRect();
-        setContainerWidth(width);
-        setContainerHeight(height);
-      }
-    };
-
-    // Initial calculation
-    handleResize();
-
-    // Recalculate on window resize
-    window.addEventListener('resize', handleResize);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   function handleLineClick(rowIndex, colIndex, orient, array) {
     
@@ -48,8 +18,6 @@ function Grid(props) {
 
 
     // Update the value at the specified indices
-
-
     if(newArray[rowIndex][colIndex] === 0) {
       //normal empty line
       newArray[rowIndex][colIndex] = props.toolType
@@ -84,10 +52,9 @@ function Grid(props) {
   };
 
 
-
+  // compute the cells which are dotted lines (gates)
   const vertiGateIdxs = useMemo(() => computeGateIdxs(props.puzzle.gates, "v"), [props.puzzle.gates]);
   const horiGateIdxs = useMemo(() => computeGateIdxs(props.puzzle.gates, "h"), [props.puzzle.gates]);
-
   function computeGateIdxs(gates, orientation) {
       let gateIdxs = [];
       for (let key in gates) {
@@ -193,9 +160,6 @@ function Grid(props) {
   const rows = props.puzzle.rows
   const columns = props.puzzle.cols
   const cellSize = Math.min(100/columns, 100/rows)*((100 - props.size)/100)
-
-  const cellWidth = containerWidth / columns;
-  const cellHeight = containerHeight / rows;
   
   const gridStyleBoard = {
     display: 'grid',
@@ -216,12 +180,12 @@ function Grid(props) {
 
 
   const cells = Array.from({ length: rows*columns }).map((_, index) => {
-    return (<Cell index={index} puzzle={props.puzzle} vertiGateIdxs={vertiGateIdxs} horiGateIdxs={horiGateIdxs} gateGrid={gateGrid} quickDraw={quickDraw} setquickDraw={setquickDraw} />)
+    return (<Cell key={index} index={index} puzzle={props.puzzle} vertiGateIdxs={vertiGateIdxs} horiGateIdxs={horiGateIdxs} gateGrid={gateGrid}/>)
   }
     
   );
 
-  const backgroundBoard = <div ref={gridContainerRef} style={gridStyleBoard}>{cells}</div>
+  const backgroundBoard = <div style={gridStyleBoard}>{cells}</div>
 
   const gridStyleHoriLines = {
     display: 'grid',
@@ -243,6 +207,7 @@ function Grid(props) {
   const horiLines = Array.from({ length: rows*(columns-1)}).map((_, index) => {
     return (    
       <HoriLine 
+        key={index}
         index={index} 
         handleLineClick={() => 
           handleLineClick(Math.floor(index/(columns-1)), index%(columns-1), "h", props.puzzle.arrayHori)} 
@@ -280,6 +245,7 @@ function Grid(props) {
     
     return (
       <VertLine 
+        key={index}
         index={index} 
         handleLineClick={() => 
           handleLineClick(Math.floor(index/(columns)), index%(columns), "v", props.puzzle.arrayVert)} 

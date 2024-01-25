@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState} from 'react';
 import {
   Button,
   Dialog,
@@ -39,7 +39,6 @@ const EditGameDialoge = (props) => {
 
   const handleConfirm = () => {
     try {
-      console.log(attributeValue, selectedAttribute)
       if (selectedAttribute === "rows"){
         props.setPuzzle({
           ...props.puzzle,
@@ -96,7 +95,7 @@ const EditGameDialoge = (props) => {
             onChange={handleAttributeChange}
           >
             {Object.keys(props.puzzle).map((key) => (
-              <MenuItem value={key}>{key}</MenuItem>
+              <MenuItem value={key} key={key}>{key}</MenuItem>
             ))}
           </Select>
           <TextField

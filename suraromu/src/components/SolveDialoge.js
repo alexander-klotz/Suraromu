@@ -29,8 +29,8 @@ const SolveDialoge = (props) => {
 
   useEffect(() => {
       ws.current = new WebSocket('ws://localhost:5000/ws');
-      ws.current.onopen = () => console.log("ws opened");
-      ws.current.onclose = () => console.log("ws closed");
+      ws.current.onopen = () => console.log("solver ws opened");
+      ws.current.onclose = () => console.log("solver ws closed");
 
       const wsCurrent = ws.current;
 
@@ -64,7 +64,7 @@ const SolveDialoge = (props) => {
   const handleAbort = () => {
     if (!ws.current) return;
     if (ws.current.readyState === WebSocket.OPEN) {
-      console.log('abort')
+      console.log('solver abort')
       ws.current.send('abort');
     }
     setAbort(true);
@@ -151,7 +151,7 @@ const SolveDialoge = (props) => {
         
       
       }
-      console.log('Message from server: ', event.data);
+      console.log('Message from solver: ', event.data);
     });
      
     

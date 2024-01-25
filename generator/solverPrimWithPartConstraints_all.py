@@ -510,7 +510,7 @@ class SuraromuSolverPrimWithPartConstraints:
                 # prematurely return the solutions to make the time the solver takes up shorter
                 if len(solutions) >= self.solutionsRequired:
                     return solutions
-                #self.print_grid(h, v)
+
                 # remove this solution
                 blocking_clause = Not(And([var if bool(m[var]) else Not(var) for row in self.H for var in row] +
                                         [var if bool(m[var]) else Not(var) for row in self.V for var in row]))

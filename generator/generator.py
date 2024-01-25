@@ -51,10 +51,6 @@ class Generator:
         puzzleGridFinal.initializeOrderedPossibleGates()        
         puzzleGridFinal.chooseGates(4, gatesAmount, False)
         
-        
-        # printing
-        puzzleGridFinal.printGrid()
-        puzzleGridFinal.printGates()
 
         self.startIndex = puzzleGridFinal.startCell
 
@@ -99,20 +95,15 @@ class Generator:
             for r in range(self.rows):
                 for c in range(self.cols):
                     if (r, c) in cellsToBlock:
-                        print(r, c)
                         self.grid[r, c][0] = 2
 
-            self.printGates()
             
             solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, 54 - innerCounter*4)
             solutions = solver.solvePuzzle()
             
             if len(solutions) == 1:
-                print("done only one solution remains")
-                print(len(blockedCells))
                 newBlockedCells = self.removeBlockedCells(blockedCells, convertedVerticalSolverGates, convertedHorizontalSolverGates)
                 blockedCells = newBlockedCells
-                print(len(blockedCells))
                 convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells = self.getMinimalGateOrdering(convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells)
                 return self.rows, self.cols, self.startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, solutions[0]
 
@@ -142,7 +133,6 @@ class Generator:
                 print("!Error! no cells to Block anymore to guarantee unique solution")
                 return None, None, None, None, None, None, None
 
-        print("no unique solution found after ", innerCounter, " iterations")
         return None, None, None, None, None, None, None
 
         
@@ -162,7 +152,6 @@ class Generator:
         unionSet = set.union(*([set(l) for l in solutionsCells]))
         for idx, solutionCells in enumerate(solutionsCells):
             if self.listCompare(solutionCells, solutionsCells[:idx] + solutionsCells[idx + 1:]):
-                print("\n\n--------FOUND SOLUTION THAT CAN BE SINGULAR--------\n\n")
                 diff = unionSet - set(solutionCells)
                 return solutionsCells, list(diff)
         return None, None 
@@ -192,7 +181,6 @@ class Generator:
                 leastCommonList = list(s)
                 missingElements = list(diff)
         
-        print(leastCommonList, missingElements)
         return leastCommonList, missingElements
 
     '''
@@ -253,7 +241,6 @@ class Generator:
             solutions = solver.solvePuzzle()
 
             if len(solutions) == 1:
-                print("REMOVAL AMOUNT = ", removalAmount, (1 - i/10), (len(newConvertedVerticalSolverGates) + len(newConvertedHorizontalSolverGates)), i)
                 return newConvertedVerticalSolverGates, newConvertedHorizontalSolverGates, blockedCells
 
 
@@ -295,14 +282,12 @@ class Generator:
                 len(horizontalNeighbors) == 2 and not (horizontalNeighbors[0] in newBlockedCells) and not (horizontalNeighbors[1] in newBlockedCells)):
                 # try to remove this blocking cell
                 newBlockedCells.remove(cell)
-                print(cell)
                 # invoke solver and if only single solution keep this and return 
                 solver = SuraromuSolverPrimWithPartConstraints(self.rows, self.cols, self.startIndex, gcv, gch, newBlockedCells, 2)
                 solutions = solver.solvePuzzle()
 
                 if len(solutions) == 1:
                     blockedCells = newBlockedCells.copy()
-                    print("CELLLLL: ", cell)
                 else:
                     newBlockedCells = blockedCells.copy()
         
