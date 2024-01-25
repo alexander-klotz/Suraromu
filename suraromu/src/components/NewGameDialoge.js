@@ -13,6 +13,9 @@ import {
   Checkbox,
   LinearProgress,
   Box,
+  Alert,
+  AlertTitle,
+  Snackbar,
 } from '@mui/material';
 
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
@@ -69,6 +72,7 @@ const NewGameDialoge = (props) => {
 
   const handleClose = () => {
     setOpen(false);
+    handleAbort();
     setIsLoading(false);
   };
 
@@ -136,14 +140,10 @@ const NewGameDialoge = (props) => {
 
   const handleGeneration = (newPuzzle) => {
     
-    // TODO: pass the new puzzle params to the backend
-
 
     setIsLoading(true)
 
     let genPuzzle = []
-
-
     
     ws.current.send(JSON.stringify(objectData));
 
@@ -250,6 +250,18 @@ const NewGameDialoge = (props) => {
             {isLoading && <LinearProgress />}
             {isLoading && <Button onClick={handleAbort} color="secondary" variant="contained">Abort</Button>}
           </Box>
+
+          <Snackbar open={openError} autoHideDuration={4000} onClose={() => setOpenError(false)}>
+            <Alert severity="error">
+              <AlertTitle>Failure to generate</AlertTitle>
+              Generator did not find a puzzle with a single solution 
+            </Alert>
+          </Snackbar>
+          <Snackbar open={openSuccess} autoHideDuration={2000} onClose={() => setOpenSuccess(false)}>
+            <Alert severity="success">
+              Generation successful
+            </Alert>
+          </Snackbar>
 
           
         </DialogContent>

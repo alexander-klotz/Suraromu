@@ -51,6 +51,7 @@ const SolveDialoge = (props) => {
 
   const handleClose = () => {
     setOpen(false);
+    handleAbort();
     setIsLoading(false);
   };
 
