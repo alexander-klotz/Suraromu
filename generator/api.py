@@ -31,7 +31,7 @@ def generate(generator, genPuzzle):
     while triesCounter <= maxTries:
         rows, cols, startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, solution = generator.generate(triesCounter)
         if rows != None:
-            print("DONE UNIQUE PUZZLE FOUND after ", triesCounter, "iterations")
+            print("DONE UNIQUE PUZZLE FOUND after ", triesCounter, "tries")
             returnValue = convertPuzzleForWeb(rows, cols, startIndex, convertedVerticalSolverGates, convertedHorizontalSolverGates, blockedCells, solution)
             break
         triesCounter += 1
