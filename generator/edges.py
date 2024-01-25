@@ -16,7 +16,6 @@ class edgeFunctions:
         isVertical = random.choice([0, 1])
 
         randomIndex = random.choice(np.transpose(np.where(HandV[isVertical])))
-        #print("Random index as start:", [isVertical, randomIndex])
         return np.concatenate(([isVertical], randomIndex))
 
 
