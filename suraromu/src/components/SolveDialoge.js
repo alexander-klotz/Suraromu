@@ -32,12 +32,7 @@ const SolveDialoge = (props) => {
       ws.current.onopen = () => console.log("solver ws opened");
       ws.current.onclose = () => console.log("solver ws closed");
 
-      const wsCurrent = ws.current;
-
       return () => {
-        if (ws.current.readyState === WebSocket.OPEN) {
-          wsCurrent.close();
-        }
       };
   }, []);
   

@@ -47,12 +47,7 @@ const NewGameDialoge = (props) => {
       ws.current.onopen = () => console.log("generator ws opened");
       ws.current.onclose = () => console.log("generator ws closed");
 
-      const wsCurrent = ws.current;
-
       return () => {
-        if (ws.current.readyState === WebSocket.OPEN) {
-          wsCurrent.close();
-        }
       };
   }, []);
   
