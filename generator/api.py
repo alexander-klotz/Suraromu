@@ -5,6 +5,7 @@ import json
 import random
 import multiprocessing
 import asyncio
+from starlette.websockets import WebSocketDisconnect
 
 app = FastAPI()
 
@@ -86,6 +87,10 @@ async def websocket_endpoint(websocket: WebSocket):
                 await websocket.send_text(json.dumps(genPuzzle.value, default=int))
                 genPuzzle.value = None
             continue  # No message received, continue to the next iteration
+        except WebSocketDisconnect:
+            print("Error when connecting")
+        
+
 
 
 

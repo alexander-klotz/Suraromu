@@ -50,7 +50,9 @@ const NewGameDialoge = (props) => {
       const wsCurrent = ws.current;
 
       return () => {
+        if (ws.current.readyState === WebSocket.OPEN) {
           wsCurrent.close();
+        }
       };
   }, []);
   
@@ -153,7 +155,16 @@ const NewGameDialoge = (props) => {
 
         genPuzzle = JSON.parse(event.data)
         setIsLoading(false)
-        props.setNewPuzzle(genPuzzle)
+
+        let newArrayHori = createInitialArray(genPuzzle["rows"], genPuzzle["cols"]-1)
+        let newArrayVert = createInitialArray(genPuzzle["rows"]-1, genPuzzle["cols"])
+
+        let newPuzzle = {
+          ...genPuzzle,
+          arrayHori: newArrayHori,
+          arrayVert: newArrayVert
+        }
+        props.setNewPuzzle(newPuzzle)
 
         // display success message to the user
         setOpenSuccess(true)

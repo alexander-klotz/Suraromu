@@ -35,7 +35,9 @@ const SolveDialoge = (props) => {
       const wsCurrent = ws.current;
 
       return () => {
+        if (ws.current.readyState === WebSocket.OPEN) {
           wsCurrent.close();
+        }
       };
   }, []);
   
@@ -74,14 +76,8 @@ const SolveDialoge = (props) => {
 
   const updateArray = (solution, array) => {
     // Create a new array based on the boolean array
-    console.log("help", solution, array)
     let newArray = solution.map((row, i) => 
         row.map((item, j) => {
-          console.log("i:", i)
-          console.log("j:", j)
-          console.log("item:", item)
-          console.log("array:", array[i][j])
-          console.log("me", i, j, item, array[i][j])
           if(item){
             return 1
           }else if (array[i][j] === 1){
@@ -137,24 +133,24 @@ const SolveDialoge = (props) => {
 
         solution = JSON.parse(event.data)
         setIsLoading(false)
-
-        // display success message to the user
-        setOpenSuccess(true)
-        setTimeout(() => {
-          handleClose()
-        }, 2000);
-
         
-        let newArrayHori = updateArray(solution[0], [...props.puzzle.arrayHori]);
-        let arrayVert = updateArray(solution[1], [...props.puzzle.arrayVert]);
-    
-        props.setPuzzle({
-          ...props.puzzle,
-          arrayHori: newArrayHori,
-          arrayVert: arrayVert,
-        })
-        
-      
+        if (solution[0].length === props.puzzle.arrayHori.length && solution[1].length === props.puzzle.arrayVert.length){
+          let newArrayHori = updateArray(solution[0], [...props.puzzle.arrayHori]);
+          let arrayVert = updateArray(solution[1], [...props.puzzle.arrayVert]);
+          
+          props.setPuzzle({
+            ...props.puzzle,
+            arrayHori: newArrayHori,
+            arrayVert: arrayVert,
+          })
+
+          // display success message to the user
+          setOpenSuccess(true)
+          setTimeout(() => {
+            handleClose()
+          }, 2000);
+        }
+
       }
       console.log('Message from solver: ', event.data);
     });
