@@ -186,8 +186,7 @@ class SuraromuSolver:
     @idx = index of the connection that has been made
     @isHorizontal = determines if the connection is horizontal or not
 
-    @returns the connections of the cells that have just been connected (TODO: make concrete decision if we omit the
-    current connection that we made at index idx (probably better since that way our logic stays smaller))
+    @returns the connections of the cells that have just been connected 
 
     @Example h_1_1 has been made therefore we return the connections of cell 1,1 and cell 1,2
     @Example v_1_1 has been made therefore we return the connections of cell 1,1 and cell 2,1

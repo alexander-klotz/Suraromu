@@ -35,7 +35,7 @@ def getPosssibleCellIdxs(grid):
 '''
 @param rows: number of rows for the final grid
 @param cols: number of cols for the final grid
-@param fillPercentage: percentage of grid that should be filled (TODO: maybe make this fixed instead) 
+@param fillPercentage: percentage of grid that should be filled
 @return: returns the grid with the inner part of the loop marked as 1s and the outer part marked as 0s
 '''
 def drawCycle(rows, cols, fillPercentage):
