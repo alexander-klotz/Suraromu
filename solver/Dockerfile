@@ -16,6 +16,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 5000
 
 # Run app.py when the container launches
-#CMD ["python3", "solver.py"]
 CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "5000"]
-#CMD ["python3", "api.py"]
+

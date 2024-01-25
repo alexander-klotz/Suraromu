@@ -271,8 +271,7 @@ class SuraromuSolverPrimWithPartConstraints:
         return maybe_correct_loop, incorrect_loops, wrongPartsEdges
 
 
-    """
-    """
+
     def check_gate_ordering(self, cells, gate_cell_list):
 
         extractedGates = [cell for cell in cells if cell in gate_cell_list]

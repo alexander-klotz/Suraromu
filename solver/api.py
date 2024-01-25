@@ -1,4 +1,3 @@
-# Backend
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from solver import SuraromuSolver

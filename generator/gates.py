@@ -2,7 +2,7 @@ import numpy as np
 import random
 
 '''
-horizontal gate here means the gate line is horizontal!!!
+horizontal gate here means the gate line is horizontal
 '''
 class PuzzleGrid:
 

@@ -9,8 +9,6 @@ export default function getSolverPuzzle(puzzle) {
     // gate needs to be traversed horizontal so it is a vertical dotted line and in the website denotet as "v"
     let gch = {}
 
-    // TODO: for each gate we also have to add the gate cells to the blocked cells
-
     for (let number in puzzle.gates) {
         if (puzzle.gates.hasOwnProperty(number)) {
 

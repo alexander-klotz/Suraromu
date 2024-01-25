@@ -77,8 +77,6 @@ class Generator:
                     blockedCells.append((i, j))
                     self.grid[(i, j)][0] = 2
 
-               
-        # TODO: fill in the gate cells that are not reachable not sure how we do this
 
         innerCounter = 0
         cellsToBlock = []
