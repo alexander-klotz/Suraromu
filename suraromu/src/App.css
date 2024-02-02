@@ -26,6 +26,8 @@
   justify-content: center;
 }
 
+
+
 .blockedCell {
   background-color: black;
 }
@@ -40,7 +42,7 @@
 
 .startCell {
   z-index: 20;
-  background-color: #ccfded;
+  background-color: #ff6c6c;
 }
 
 .gateNumberCell {

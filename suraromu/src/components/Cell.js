@@ -81,7 +81,7 @@ export default function Cell(props) {
 
 
     return(
-        <div ref={outerDivRef} key={props.index} className={classNames[getCellType(idx2D)]} 
+        <div ref={outerDivRef} key={props.index} className={classNames[getCellType(idx2D)]} style={{ backgroundColor: getCellType(idx2D) === 5 && props.isCorrect ? '#ccfded' : '' }}
         >
             <p className={"cellText" + (getCellType(idx2D) === 5 ? "start" : "")}>{content}</p>
         </div>  

@@ -2,12 +2,73 @@ import React from 'react'
 import Cell from './Cell'
 import VertLine from './VertLine'
 import HoriLine from './HoriLine'
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 function Grid(props) {
 
-  function handleLineClick(rowIndex, colIndex, orient, array) {
+
+  const [cellCoords, setCellCoords] = useState({ row: 0, col: 0 });
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  var isCorrect = false
+  var conToSet = null
+
+  const handleMouseDown = () => {
+    setIsMouseDown(true);
+  };
+
+  const handleMouseUp = () => {
+    setIsMouseDown(false);
+    // reset the lastCellcords to Null
+    setCellCoords(null)
+    conToSet = null
+  };
+
+  const handleMouse = (event) => {
+    var div = document.getElementById('cellBoard');
+    const rect = div.getBoundingClientRect();
+
+    const cellElement = document.querySelector('.cell');
+    const cellRect = cellElement.getBoundingClientRect();
+
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+
     
+    x = x - (rect.width - cellRect.width*columns)/2 // remove the space on the left of the grid
+
+    // TODO: make it so the hitbox is smaller  to make sure we don't set and unset to quickly!!!
+    const cellX = Math.floor(x / (cellRect.width));
+    const cellY = Math.floor(y / (cellRect.height));
+    const cellIndex = cellY * columns + cellX;
+     
+    if (cellX >= 0 && cellX < columns && cellY >= 0 && cellY < rows && isMouseDown){
+      if (cellCoords == null) {
+        setCellCoords({row: cellY, col: cellX});
+      }else if ((Math.abs(cellX - cellCoords.col) + Math.abs(cellY - cellCoords.row)) === 1) {
+        // Find out what connection this is and set it
+        let newConToSet = ConnectionOfCells(cellY, cellX, cellCoords.row, cellCoords.col)
+        if (conToSet !== newConToSet){
+           conToSet = newConToSet
+        }
+
+
+        console.log(cellCoords, cellY, cellX)
+        setCellCoords({row: cellY, col: cellX});
+      }else {
+        setCellCoords({row: cellY, col: cellX});
+      }
+      
+    }
+      
+  }
+  
+
+  function ConnectionOfCells(r1, c1, r2, c2){
+
+  }
+
+  function handleLineClick(rowIndex, colIndex, orient, array) {
+
     // skip since it's a invalid line
     if(array[rowIndex][colIndex] === -1) {
       return 
@@ -50,6 +111,26 @@ function Grid(props) {
     }
 
   };
+
+  // TODO: check if current version is the same as saved solution and if so make the start cell green   background-color: #green;
+  const checkIfCorrect = (solution, array) => {
+    
+    for (let i = 0; i < solution.length; i++) {
+      for (let j = 0; j < solution[i].length; j++) {
+          if (solution[i][j] && array[i][j] !== 1){
+            return false
+          }
+          if ( !(solution[i][j]) && array[i][j] === 1){
+            return false
+          }
+      }
+    }
+    return true
+  };
+
+  if (checkIfCorrect(props.puzzle.solution[0], props.puzzle.arrayHori) && checkIfCorrect(props.puzzle.solution[1], props.puzzle.arrayVert)){
+    isCorrect = true
+  }
 
 
   // compute the cells which are dotted lines (gates)
@@ -166,13 +247,13 @@ function Grid(props) {
     gridTemplateColumns: `repeat(${columns}, ${cellSize}%)`,
     gridTemplateRows: `repeat(${rows}, ${cellSize}%)`,
     gap: '0px',
-    margin: "auto",
+    margin: "0",
     padding: '0rem',
     aspectRatio: "1/1",
     left: 0,
     right: 0,
     top: 0,
-    bottom: "auto",
+    bottom: 0,
     position: "absolute",
     justifyContent: "center", 
   };
@@ -180,12 +261,12 @@ function Grid(props) {
 
 
   const cells = Array.from({ length: rows*columns }).map((_, index) => {
-    return (<Cell key={index} index={index} puzzle={props.puzzle} vertiGateIdxs={vertiGateIdxs} horiGateIdxs={horiGateIdxs} gateGrid={gateGrid}/>)
+    return (<Cell key={index} index={index} puzzle={props.puzzle} vertiGateIdxs={vertiGateIdxs} horiGateIdxs={horiGateIdxs} gateGrid={gateGrid} isCorrect={isCorrect}/>)
   }
     
   );
 
-  const backgroundBoard = <div style={gridStyleBoard}>{cells}</div>
+  const backgroundBoard = <div id='cellBoard' style={gridStyleBoard}>{cells}</div>
 
   const gridStyleHoriLines = {
     display: 'grid',
@@ -267,7 +348,7 @@ function Grid(props) {
   }
 
   return (
-    <div className='Grid' style={gridStyle}>      
+    <div className='Grid' style={gridStyle} onMouseMove={handleMouse} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>      
       {backgroundBoard}
       {vertLinesGrid}
       {horiLinesGrid}

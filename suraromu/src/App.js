@@ -25,7 +25,8 @@ function App() {
     startCell: [0, 0],
     blockedCells: [],
     gates: {
-    } 
+    },
+    solution: [[], []]
   });
 
   useEffect(() => {
