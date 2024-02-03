@@ -5,6 +5,21 @@ This application to play/solve/generate the logic puzzle Suraromu was the main f
 First please install [Docker](https://www.docker.com/). 
 This makes running this application much more convenient and saves you the time of having to install everything neccessary individually.
 
+# Install node modules
+From the directory of this README file first move down into the suraromu folder. Then install the node modules using the second command
+1. Change directory to `suraromu`:
+
+    ```bash
+    cd suraromu 
+    ```
+
+2. Install the node modules:
+
+    ```bash
+    npm install 
+    ```
+
+
 # Front-end + Back-end build and run
 Make sure you are in the same directory as this README file and the docker-compose.yaml and then run the following command:
 ```bash
