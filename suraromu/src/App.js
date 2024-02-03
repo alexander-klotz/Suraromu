@@ -31,7 +31,7 @@ function App() {
 
   useEffect(() => {
     if(shouldTrack){
-      console.log("puzzle:", puzzle);
+      //console.log("puzzle:", puzzle);
       setHistory((prevHistory) => [...prevHistory, structuredClone(puzzle)]);
     }else{
       setShouldTrack(true)

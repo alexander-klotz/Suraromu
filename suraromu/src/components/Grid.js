@@ -2,26 +2,46 @@ import React from 'react'
 import Cell from './Cell'
 import VertLine from './VertLine'
 import HoriLine from './HoriLine'
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect} from 'react';
 
 function Grid(props) {
 
 
   const [cellCoords, setCellCoords] = useState({ row: 0, col: 0 });
-  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [dKeyPressed, setDKeyPressed] = useState(false);
+  const [lastConDragged, setLastConDragged] = useState(null);
+  
   var isCorrect = false
-  var conToSet = null
 
-  const handleMouseDown = () => {
-    setIsMouseDown(true);
-  };
+    useEffect(() => {
+      const onKeyDown = (e) => {
+        if (e.key === 'd' || e.key === 'D') {
+          setDKeyPressed(true)
+        }
+      }
+  
+      const onKeyUp = (e) => {
+        if (e.key === 'd' || e.key === 'D') { 
+          setDKeyPressed(false)
+          setCellCoords(null)
+        }
+      }
+  
+      window.addEventListener('keydown', onKeyDown);
+      window.addEventListener('keyup', onKeyUp);
+  
+      // cleanup
+      return () => {
+        window.removeEventListener('keydown', onKeyDown);
+        window.removeEventListener('keyup', onKeyUp);
+      };
+    }, []);
 
-  const handleMouseUp = () => {
-    setIsMouseDown(false);
-    // reset the lastCellcords to Null
-    setCellCoords(null)
-    conToSet = null
-  };
+    useEffect(() => {
+      if (lastConDragged !== null) {
+        handleLineClick(...lastConDragged)
+      }
+    }, [lastConDragged]);
 
   const handleMouse = (event) => {
     var div = document.getElementById('cellBoard');
@@ -36,23 +56,18 @@ function Grid(props) {
     
     x = x - (rect.width - cellRect.width*columns)/2 // remove the space on the left of the grid
 
-    // TODO: make it so the hitbox is smaller  to make sure we don't set and unset to quickly!!!
     const cellX = Math.floor(x / (cellRect.width));
     const cellY = Math.floor(y / (cellRect.height));
-    const cellIndex = cellY * columns + cellX;
      
-    if (cellX >= 0 && cellX < columns && cellY >= 0 && cellY < rows && isMouseDown){
+    if (cellX >= 0 && cellX < columns && cellY >= 0 && cellY < rows && dKeyPressed){
       if (cellCoords == null) {
         setCellCoords({row: cellY, col: cellX});
       }else if ((Math.abs(cellX - cellCoords.col) + Math.abs(cellY - cellCoords.row)) === 1) {
         // Find out what connection this is and set it
         let newConToSet = ConnectionOfCells(cellY, cellX, cellCoords.row, cellCoords.col)
-        if (conToSet !== newConToSet){
-           conToSet = newConToSet
+        if(lastConDragged !== newConToSet){
+          setLastConDragged(newConToSet)
         }
-
-
-        console.log(cellCoords, cellY, cellX)
         setCellCoords({row: cellY, col: cellX});
       }else {
         setCellCoords({row: cellY, col: cellX});
@@ -64,6 +79,13 @@ function Grid(props) {
   
 
   function ConnectionOfCells(r1, c1, r2, c2){
+    if (r1 === r2){
+      // horizontal connection
+      return [r1, Math.min(c1, c2), 'h', props.puzzle.arrayHori]
+    }else {
+      // vertical connection
+      return [Math.min(r1, r2), c1, 'v', props.puzzle.arrayVert]
+    }
 
   }
 
@@ -112,7 +134,7 @@ function Grid(props) {
 
   };
 
-  // TODO: check if current version is the same as saved solution and if so make the start cell green   background-color: #green;
+
   const checkIfCorrect = (solution, array) => {
     
     for (let i = 0; i < solution.length; i++) {
@@ -348,7 +370,7 @@ function Grid(props) {
   }
 
   return (
-    <div className='Grid' style={gridStyle} onMouseMove={handleMouse} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>      
+    <div className='Grid' style={gridStyle} onMouseMove={handleMouse}>      
       {backgroundBoard}
       {vertLinesGrid}
       {horiLinesGrid}
